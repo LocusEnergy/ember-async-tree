@@ -1,0 +1,27 @@
+<div class="simple mdl-cell mdl-cell--12-col-desktop">
+  <h3>Simple Async Tree</h3>
+
+  {{! // BEGIN-SNIPPET simple-template }}
+    {{#async-tree
+      children=model
+      fetch=fetch
+      checkOpen=checkOpen
+      open="open"
+      close="close"
+      as |node component|
+    }}{{node.name}}{{/async-tree}}
+  {{! // END-SNIPPET }}
+
+  <h4>Template</h4>
+  {{code-snippet name="simple-template.hbs"}}
+
+  <h4>Route</h4>
+  {{code-snippet name="simple-route.js"}}
+
+  <h4>Controller</h4>
+  {{code-snippet name="simple-controller.js"}}
+
+  <h4>CSS</h4>
+  {{code-snippet name="simple-scss.scss"}}
+
+</div>

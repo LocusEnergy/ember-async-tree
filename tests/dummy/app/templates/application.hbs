@@ -1,5 +1,14 @@
-<h2 id="title">Async Tree Component</h2>
-
-
-
-{{outlet}}
+<div class="mdl-layout mdl-js-layout mdl-layout--fixed-drawer
+            mdl-layout--overlay-drawer-button">
+  <div class="mdl-layout__drawer">
+    <span class="mdl-layout-title">Async Tree</span>
+    <nav class="mdl-navigation">
+      {{#link-to 'simple' classNames="mdl-navigation__link"}}Simple{{/link-to}}
+    </nav>
+  </div>
+  <main class="mdl-layout__content">
+    <div class="mdl-grid">
+      {{outlet}}
+    </div>
+  </main>
+</div>

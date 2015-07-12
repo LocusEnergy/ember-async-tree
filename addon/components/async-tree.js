@@ -1,14 +1,13 @@
 import Ember from 'ember';
-import AsyncTreeTemplate from 'ember-async-tree/templates/async-tree';
+import AsyncTreeLayout from 'ember-async-tree/templates/async-tree';
 import required from 'ember-async-tree/computed/required';
 
 const {on, get, computed} = Ember;
 
 export default Ember.Component.extend({
-  template: AsyncTreeTemplate,
+  layout: AsyncTreeLayout,
   classNameBindings: [
-    'hasParent::async-tree',
-    ':async-tree-node',
+    'hasNoNode:async-tree:async-tree-node',
     'isOpen:is-open:is-not-open',
     'isLoaded:is-loaded:is-not-loaded',
     'isLoading:is-loading'
@@ -38,8 +37,10 @@ export default Ember.Component.extend({
   }),
   hasNoNode: computed.none('node'),
   hasNode: computed.not('hasNoNode'),
-  hasChildren: computed.gt('children.length', 0),
-  hasParent: computed.notEmpty('parent'),
+  hasChildren: computed.not('hasNoChildren'),
+  hasNoChildren: computed.empty('children'),
+  hasParent: computed.not('parent'),
+  hasNoParent: computed.none('parent'),
   isNotLoaded: computed.none('children'),
   isLoaded: computed.not('isNotLoaded'),
 
@@ -59,26 +60,39 @@ export default Ember.Component.extend({
     let promise = this._fetch()
       .then((children)=>{
         this.set('children', children);
-        return children;
-      })
-      .finally(()=>{
         this.set('isLoading', false);
+        return children;
       });
     this.set('promise', promise);
     return promise;
   },
   _fetch: function(){
-    let fetch = this.get('fetch');
+    const fetch = this.get('fetch');
     return fetch(this.get('node'));
   },
+  _open() {
+    const node = this.get('node');
+    const isLoaded = this.get('isLoaded');
+    if (isLoaded) {
+      this.send('open', node);
+    } else {
+      this.fetchData().then(()=>{
+        this.send('open', node);
+      });
+    }
+   },
+  _close: on('willDestroyElement', function(){
+    let node = this.get('node');
+    this.send('close', node);
+  }),
   click() {
     let isOpen = this.get('isOpen');
-    let node = this.get('node');
     if (isOpen) {
-      this.send('close', node);
+      this._close();
     } else {
-      this.send('open', node);
+      this._open();
     }
+    return false;
   },
   actions: {
     open(node) {
