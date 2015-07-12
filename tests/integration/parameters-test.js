@@ -38,14 +38,16 @@ test('fetch-on-init=true calls fetch when component initializes', function(asser
 });
 
 test('children fetch on init', function(assert){
-  let content = Ember.A([
+  let content = [
     {title: 'First child'},
     {title: 'Second child'}
-  ]);
+  ];
   this.set('fetch', (node)=>{
+    let children = [];
     if (node == null) {
-      return Ember.RSVP.resolve(content);
+      children = content;
     }
+    return Ember.RSVP.resolve(Ember.A(children));
   });
   this.set('checkOpen', ()=>{
     return false;

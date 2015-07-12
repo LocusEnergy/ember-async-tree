@@ -37,7 +37,7 @@ export default Ember.Component.extend({
     }
   }),
   hasNoNode: computed.none('node'),
-  hasNode: computed.not('hasNoNode').
+  hasNode: computed.not('hasNoNode'),
   hasChildren: computed.gt('children.length', 0),
   hasParent: computed.notEmpty('parent'),
   isNotLoaded: computed.none('children'),
@@ -70,6 +70,15 @@ export default Ember.Component.extend({
   _fetch: function(){
     let fetch = this.get('fetch');
     return fetch(this.get('node'));
+  },
+  click() {
+    let isOpen = this.get('isOpen');
+    let node = this.get('node');
+    if (isOpen) {
+      this.send('close', node);
+    } else {
+      this.send('open', node);
+    }
   },
   actions: {
     open(node) {

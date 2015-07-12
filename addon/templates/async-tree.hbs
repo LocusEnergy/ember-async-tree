@@ -7,6 +7,8 @@
   <ul class="node-list">
   {{#each children as |child|}}
     {{#async-tree
+      expand-only-child=expand-only-child
+      fetch-on-init=fetch-on-init
       tagName="li"
       fetch=fetch
       checkOpen=checkOpen
