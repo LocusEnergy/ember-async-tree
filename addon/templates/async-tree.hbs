@@ -1,6 +1,8 @@
-<div class="node-label">
-  {{yield node isOpen hasChildren}}
-</div>
+{{#if hasNode}}
+  <div class="node-label">
+    {{yield node this}}
+  </div>
+{{/if}}
 {{#if isOpen}}
   <ul class="node-list">
   {{#each children as |child|}}
@@ -12,9 +14,9 @@
       close="close"
       parent=node
       node=child
-      as |child isOpen hasChildren|
+      as |child component|
     }}
-      {{yield child isOpen hasChildren}}
+      {{yield child component}}
     {{/async-tree}}
   {{/each}}
   </ul>

@@ -36,8 +36,12 @@ export default Ember.Component.extend({
       });
     }
   }),
+  hasNoNode: computed.none('node'),
+  hasNode: computed.not('hasNoNode').
   hasChildren: computed.gt('children.length', 0),
   hasParent: computed.notEmpty('parent'),
+  isNotLoaded: computed.none('children'),
+  isLoaded: computed.not('isNotLoaded'),
 
   isOpen: computed('checkOpen', 'node', {
     get() {
@@ -51,10 +55,14 @@ export default Ember.Component.extend({
     }
   }),
   fetchData: function() {
+    this.set('isLoading', true);
     let promise = this._fetch()
       .then((children)=>{
         this.set('children', children);
         return children;
+      })
+      .finally(()=>{
+        this.set('isLoading', false);
       });
     this.set('promise', promise);
     return promise;
