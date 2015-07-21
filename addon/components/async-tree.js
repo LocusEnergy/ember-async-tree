@@ -86,6 +86,12 @@ export default Ember.Component.extend({
     this.send('close', node);
   }),
   click() {
+    const useActions = this.get('open') && this.get('close');
+    if (!useActions) {
+      // open and close actions were not passed in, therefore assume that
+      // user is triggering open and close manually in the template
+      return true;
+    }
     let isOpen = this.get('isOpen');
     if (isOpen) {
       this._close();

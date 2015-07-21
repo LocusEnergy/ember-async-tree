@@ -1,6 +1,9 @@
 import Ember from 'ember';
 import hbs from 'htmlbars-inline-precompile';
-import { moduleForComponent, test } from 'ember-qunit';
+import {
+  moduleForComponent,
+  test
+} from 'ember-qunit';
 
 moduleForComponent('parameters', {
   integration: true
@@ -76,3 +79,7 @@ test('fetch-on-init=true sets children', function(assert){
   this.render(hbs`{{async-tree fetch-on-init=true fetch=fetch checkOpen=checkOpen}}`);
   assert.ok(called, "Fetch was called.");
 });
+
+// skip('click handler is disabled by not passing open and close actions', function(){
+//   // TODO: add test for clicking on actions
+// });
