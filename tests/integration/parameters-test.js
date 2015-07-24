@@ -76,3 +76,25 @@ test('fetch-on-init=true sets children', function(assert){
   this.render(hbs`{{async-tree fetch-on-init=true fetch=fetch checkOpen=checkOpen}}`);
   assert.ok(called, "Fetch was called.");
 });
+
+test('initialData prepopulates the tree', function(assert){
+  this.set('fetch', ()=>{});
+  this.set('checkOpen', ()=>{});
+  const initialData = [
+    {title: 'Level 1'},
+    {title: 'Level 2'},
+    {title: 'Level 3'}
+  ];
+  this.set('initialData', initialData);
+  this.render(hbs`
+    {{#async-tree
+      fetch=fetch
+      checkOpen=checkOpen
+      initialData=initialData
+      as |node|
+    }}{{node.title}}{{/async-tree}}`);
+  assert.equal(this.$('.node-label').length, 3);
+  assert.equal(this.$('.node-label:eq(0)').text().trim(), 'Level 1');
+  assert.equal(this.$('.node-label:eq(1)').text().trim(), 'Level 2');
+  assert.equal(this.$('.node-label:eq(2)').text().trim(), 'Level 3');
+});

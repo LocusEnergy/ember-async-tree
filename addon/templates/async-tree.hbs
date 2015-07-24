@@ -1,12 +1,12 @@
 {{#if hasNode}}
-  <span class="node-label">
-    {{yield node this}}
-  </span>
+  <span class="node-label">{{yield node this}}</span>
 {{/if}}
 {{#if isOpen}}
   <ul class="node-list">
   {{#each children as |child|}}
     {{#async-tree
+      depth=nextDepth
+      initialData=initialData
       expand-only-child=expand-only-child
       fetch-on-init=fetch-on-init
       tagName="li"
