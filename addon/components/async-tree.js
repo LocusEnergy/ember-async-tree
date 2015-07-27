@@ -20,7 +20,7 @@ export default Ember.Component.extend({
   checkOpen: required(),
   fetch: required(),
 
-  initialize: on('init', function(){
+  _initialize: on('init', function(){
     this.setupFetchOnInit();
     this.setupInitialData();
   }),
