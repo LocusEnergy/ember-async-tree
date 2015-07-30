@@ -2,7 +2,13 @@ import Ember from 'ember';
 import AsyncTreeLayout from 'ember-async-tree/templates/async-tree';
 import required from 'ember-async-tree/computed/required';
 
-const {on, get, computed, isNone} = Ember;
+const {
+  on,
+  get,
+  computed,
+  isNone,
+  isEmpty
+} = Ember;
 
 export default Ember.Component.extend({
   layout: AsyncTreeLayout,
@@ -41,23 +47,32 @@ export default Ember.Component.extend({
     }
   },
   setupInitialData() {
-    const initialData = this.get('initialData');
-    if (initialData) {
-      const hasNoNode = this.get('hasNoNode');
-      if (hasNoNode) {
-        const depth = this.get('depth');
-        this.set('node', initialData[depth]);
-      }
-      const nextDepth = this.get('nextDepth');
-      const hasNextNode = !isNone(initialData[nextDepth]);
-      if (hasNextNode) {
+    const data = this.get('initialData');
+    if (data) {
+      const children = this.getChildren(data, this.get('node'));
+      if (!isEmpty(children)) {
         this.setProperties({
-          children: [initialData[nextDepth]],
+          children: children,
           isOpen: true
         });
       }
     }
   },
+  getChildren(data, parent) {
+    const childrenFilter = this.get('children-filter') || this.get('childrenFilter');
+    return childrenFilter(data, parent);
+  },
+  childrenFilter: computed({
+    get() {
+      return (data) => {
+        const nextDepth = this.get('nextDepth') - 1;
+        const hasNextNode = !isNone(data[nextDepth]);
+        if (hasNextNode) {
+          return [data[nextDepth]];
+        }
+      };
+    }
+  }),
   nextDepth: computed('depth', {
     get() {
       return this.get('depth') + 1;
