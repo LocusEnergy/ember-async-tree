@@ -97,6 +97,14 @@ test('initialData prepopulates the tree', function(assert){
   assert.equal(this.$('.node-label:eq(0)').text().trim(), 'Level 1');
   assert.equal(this.$('.node-label:eq(1)').text().trim(), 'Level 2');
   assert.equal(this.$('.node-label:eq(2)').text().trim(), 'Level 3');
+
+  this.set('initialData', [
+    {title: 'Level 1 - after render'},
+    {title: 'Level 2 - after render'}
+  ]);
+  assert.equal(this.$('.node-label').length, 2);
+  assert.equal(this.$('.node-label:eq(0)').text().trim(), 'Level 1 - after render');
+  assert.equal(this.$('.node-label:eq(1)').text().trim(), 'Level 2 - after render');
 });
 
 test('initialData works with children-filter', function(assert){

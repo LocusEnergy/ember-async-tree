@@ -6,6 +6,7 @@ const {
   on,
   get,
   computed,
+  observer,
   isNone,
   isEmpty
 } = Ember;
@@ -46,7 +47,7 @@ export default Ember.Component.extend({
       });
     }
   },
-  setupInitialData() {
+  setupInitialData: observer('initialData', function() {
     const data = this.get('initialData');
     if (data) {
       const children = this.getChildren(data, this.get('node'));
@@ -57,7 +58,7 @@ export default Ember.Component.extend({
         });
       }
     }
-  },
+  }),
   getChildren(data, parent) {
     const childrenFilter = this.get('children-filter') || this.get('childrenFilter');
     return childrenFilter(data, parent);
