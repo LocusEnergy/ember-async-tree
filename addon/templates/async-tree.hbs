@@ -13,14 +13,20 @@
       tagName="li"
       fetch=fetch
       checkOpen=checkOpen
+      checkHasMore=checkHasMore
       open="open"
       close="close"
       parent=node
       node=child
       as |child component|
     }}
-      {{yield child component}}
+      <span class="toggle-open" {{action 'toggle' target=component bubbles=false}}>
+        {{yield child component}}
+      </span>
     {{/async-tree}}
   {{/each}}
   </ul>
+  {{#if hasMore}}
+    <span class="load-more" {{action 'more' node meta}}>More</span>
+  {{/if}}
 {{/if}}

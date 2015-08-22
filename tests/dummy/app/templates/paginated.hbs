@@ -1,0 +1,29 @@
+<div class="paginated mdl-cell mdl-cell--12-col-desktop">
+  <h3>Paginated Async Tree</h3>
+
+  {{! // BEGIN-SNIPPET paginated-template }}
+    {{#async-tree
+      children=model
+      meta=model.meta
+      fetch=fetch
+      checkOpen=checkOpen
+      checkHasMore=checkHasMore
+      open="open"
+      close="close"
+      as |node component|
+    }}{{node.name}}{{/async-tree}}
+  {{! // END-SNIPPET }}
+
+  <h4>Template</h4>
+  {{code-snippet name="paginated-template.hbs"}}
+
+  <h4>Route</h4>
+  {{code-snippet name="paginated-route.js"}}
+
+  <h4>Controller</h4>
+  {{code-snippet name="paginated-controller.js"}}
+
+  <h4>CSS</h4>
+  {{code-snippet name="paginated-scss.scss"}}
+
+</div>

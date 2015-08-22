@@ -8,8 +8,14 @@ const {
   computed,
   observer,
   isNone,
-  isEmpty
+  isEmpty,
+  RSVP,
+  A
 } = Ember;
+
+const {
+  resolve
+} = RSVP;
 
 export default Ember.Component.extend({
   layout: AsyncTreeLayout,
@@ -40,7 +46,8 @@ export default Ember.Component.extend({
       promise = this.fetchData();
     }
     if (!hasChildren && fetchOnInit && expandOnlyChild) {
-      promise.then((children=[])=>{
+      promise.then((children)=>{
+        children = new A(children);
         if (children.length === 1) {
           this.sendAction('open', get(children, 'firstObject'));
         }
@@ -69,7 +76,7 @@ export default Ember.Component.extend({
         const nextDepth = this.get('nextDepth') - 1;
         const hasNextNode = !isNone(data[nextDepth]);
         if (hasNextNode) {
-          return [data[nextDepth]];
+          return new A([data[nextDepth]]);
         }
       };
     }
@@ -99,20 +106,46 @@ export default Ember.Component.extend({
       return checkOpen(node);
     }
   }),
-  fetchData: function() {
+  setMeta(children) {
+    if (children) {
+      this.set('meta', get(children, 'meta'));
+    }
+  },
+  appendChildren(children = []) {
+    let _children = this.get('children');
+    if (!_children) {
+      _children = new A();
+      this.set('children', _children);
+    }
+    _children.pushObjects(children);
+  },
+  startLoading() {
     this.set('isLoading', true);
-    let promise = this._fetch()
+  },
+  finishLoading() {
+    this.set('isLoading', false);
+  },
+  fetchData: function(node, meta) {
+    this.startLoading();
+    let promise = this._fetch(node, meta)
       .then((children)=>{
-        this.set('children', children);
-        this.set('isLoading', false);
+        this.setMeta(children);
+        this.appendChildren(children);
+        return children;
+      })
+      .finally((children)=>{
+        this.finishLoading();
         return children;
       });
     this.set('promise', promise);
     return promise;
   },
-  _fetch: function(){
+  _fetch: function(node, meta){
+    node = node || this.get('node');
+
     const fetch = this.get('fetch');
-    return fetch(this.get('node'));
+    let result = fetch(node, meta);
+    return result && result.then ? result : resolve(result);
   },
   _open() {
     const node = this.get('node');
@@ -129,21 +162,34 @@ export default Ember.Component.extend({
     let node = this.get('node');
     this.send('close', node);
   }),
-  click() {
-    let isOpen = this.get('isOpen');
-    if (isOpen) {
-      this._close();
-    } else {
-      this._open();
+  hasMore: computed('checkHasMore', 'meta', {
+    get() {
+      const checkHasMore = this.get('checkHasMore');
+      if (!checkHasMore) {
+        return;
+      }
+      const node = this.get('node');
+      const meta = this.get('meta');
+      return checkHasMore(node, meta);
     }
-    return false;
-  },
+  }),
   actions: {
     open(node) {
       this.sendAction('open', node);
     },
     close(node) {
       this.sendAction('close', node);
+    },
+    toggle() {
+      let isOpen = this.get('isOpen');
+      if (isOpen) {
+        this._close();
+      } else {
+        this._open();
+      }
+    },
+    more(node, meta) {
+      this.fetchData(node, meta);
     }
   }
 });
