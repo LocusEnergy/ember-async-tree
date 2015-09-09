@@ -1,0 +1,24 @@
+<span
+  class="node-label toggle-open"
+  {{action 'toggle' bubbles=false}}>{{yield node this}}</span>
+{{#if is-open}}
+  <div class="node-list">
+  {{#each nodes as |child|}}
+    {{#async-node
+      data=data
+      fetch-on-init=attsr.fetch-on-init
+      fetch=attrs.fetch
+      filter-data=attrs.filter-data
+      open-nodes=attrs.open-nodes
+      is-open=(array-contains attrs.open-nodes child)
+      on-open=attrs.on-open
+      on-close=attrs.on-close
+      parent=node
+      node=child
+      as |child component|
+    }}
+      {{yield child component}}
+    {{/async-node}}
+  {{/each}}
+  </div>
+{{/if}}

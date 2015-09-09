@@ -1,26 +1,18 @@
-{{#if hasNode}}
-  <span class="node-label">{{yield node this}}</span>
-{{/if}}
-{{#if isOpen}}
-  <ul class="node-list">
-  {{#each children as |child|}}
-    {{#async-tree
-      depth=nextDepth
-      initialData=initialData
-      children-filter=children-filter
-      expand-only-child=expand-only-child
-      fetch-on-init=fetch-on-init
-      tagName="li"
-      fetch=fetch
-      checkOpen=checkOpen
-      open="open"
-      close="close"
-      parent=node
-      node=child
-      as |child component|
-    }}
-      {{yield child component}}
-    {{/async-tree}}
-  {{/each}}
-  </ul>
-{{/if}}
+<div class="node-list">
+{{#each nodes as |node|}}
+  {{#async-node
+    data=data
+    fetch=attrs.fetch
+    filter-data=(action (if attrs.filter-data attrs.filter-data 'filterData') data)
+    open-nodes=openNodes
+    is-open=(array-contains openNodes node)
+    on-open=(action 'open')
+    on-close=(action 'close')
+    depth=0
+    node=node
+    as |node component|
+  }}
+    {{yield node component}}
+  {{/async-node}}
+{{/each}}
+</div>

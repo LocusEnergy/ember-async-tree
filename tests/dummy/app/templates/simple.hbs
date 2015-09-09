@@ -3,20 +3,14 @@
 
   {{! // BEGIN-SNIPPET simple-template }}
     {{#async-tree
-      children=model
-      fetch=fetch
-      checkOpen=checkOpen
-      open="open"
-      close="close"
+      fetch-on-init=true
+      fetch=(action 'fetch')
       as |node component|
     }}{{node.name}}{{/async-tree}}
   {{! // END-SNIPPET }}
 
   <h4>Template</h4>
   {{code-snippet name="simple-template.hbs"}}
-
-  <h4>Route</h4>
-  {{code-snippet name="simple-route.js"}}
 
   <h4>Controller</h4>
   {{code-snippet name="simple-controller.js"}}

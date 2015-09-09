@@ -6,21 +6,15 @@ moduleForComponent('parameters', {
   integration: true
 });
 
-test('not providing required parameters throws an error', function(assert){
-  assert.throws(function(){
-    this.render(hbs`{{async-tree}}`);
-  }, 'openCheck is required');
-
-  this.set('openCheck', ()=>{});
+test('not providing fetch throws an error', function(assert){
   assert.throws(function() {
-    this.render(hbs`{{async-tree openCheck=openCheck}}`);
+    this.render(hbs`{{async-tree}}`);
   }, 'fetch is required');
 });
 
 test('renders component with required parameters', function(assert) {
-  this.set('fetch', ()=>{});
-  this.set('checkOpen', ()=>{});
-  this.render(hbs`{{async-tree fetch=fetch checkOpen=checkOpen}}`);
+  this.on('fetch', ()=>{});
+  this.render(hbs`{{async-tree fetch=(action 'fetch')}}`);
 
   var $component = this.$('.async-tree');
   assert.ok($component.hasClass('async-tree'));
@@ -28,35 +22,30 @@ test('renders component with required parameters', function(assert) {
 
 test('fetch-on-init=true calls fetch when component initializes', function(assert){
   let called = false;
-  this.set('fetch', ()=>{
+  this.on('fetch', ()=>{
     called = true;
     return Ember.RSVP.resolve();
   });
-  this.set('checkOpen', ()=>{});
-  this.render(hbs`{{async-tree fetch-on-init=true fetch=fetch checkOpen=checkOpen}}`);
+  this.render(hbs`{{async-tree fetch-on-init=true fetch=fetch}}`);
   assert.ok(called, "Fetch was called.");
 });
 
 test('children fetch on init', function(assert){
-  let content = [
+  let data = [
     {title: 'First child'},
     {title: 'Second child'}
   ];
-  this.set('fetch', (node)=>{
+  this.on('fetch', (node)=>{
     let children = [];
     if (node == null) {
       children = content;
     }
     return Ember.RSVP.resolve(Ember.A(children));
   });
-  this.set('checkOpen', ()=>{
-    return false;
-  });
   this.render(hbs`
     {{#async-tree
-      fetch-on-init=true
-      fetch=fetch
-      checkOpen=checkOpen
+      data=data
+      fetch=(action 'fetch')
       as |node|
     }}{{node.title}}{{/async-tree}}`);
   var $component = this.$('.async-tree');
@@ -68,31 +57,29 @@ test('children fetch on init', function(assert){
 
 test('fetch-on-init=true sets children', function(assert){
   let called = false;
-  this.set('fetch', ()=>{
+  this.on('fetch', ()=>{
     called = true;
     return Ember.RSVP.resolve();
   });
   this.set('checkOpen', ()=>{});
-  this.render(hbs`{{async-tree fetch-on-init=true fetch=fetch checkOpen=checkOpen}}`);
+  this.render(hbs`{{async-tree fetch-on-init=true fetch=fetch}}`);
   assert.ok(called, "Fetch was called.");
 });
 
-test('initialData prepopulates the tree', function(assert){
-  this.set('fetch', ()=>{});
-  this.set('checkOpen', ()=>{});
-  const initialData = [
+test('data prepopulates the tree', function(assert){
+  this.on('fetch', ()=>{});
+  this.set('data', [
     {title: 'Level 1'},
     {title: 'Level 2'},
     {title: 'Level 3'}
-  ];
-  this.set('initialData', initialData);
+  ]);
   this.render(hbs`
     {{#async-tree
+      data=data
       fetch=fetch
-      checkOpen=checkOpen
-      initialData=initialData
       as |node|
     }}{{node.title}}{{/async-tree}}`);
+  debugger;
   assert.equal(this.$('.node-label').length, 3);
   assert.equal(this.$('.node-label:eq(0)').text().trim(), 'Level 1');
   assert.equal(this.$('.node-label:eq(1)').text().trim(), 'Level 2');
@@ -109,7 +96,6 @@ test('initialData prepopulates the tree', function(assert){
 
 test('initialData works with children-filter', function(assert){
   this.set('fetch', ()=>{});
-  this.set('checkOpen', ()=>{});
   const types = {
     country: 'state',
     state: 'city',
@@ -138,7 +124,6 @@ test('initialData works with children-filter', function(assert){
   this.render(hbs`
     {{#async-tree
       fetch=fetch
-      checkOpen=checkOpen
       initialData=initialData
       children-filter=childrenFilter
       as |node|
