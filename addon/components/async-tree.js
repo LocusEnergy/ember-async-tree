@@ -4,10 +4,8 @@ import AsyncTreeLayout from 'ember-async-tree/templates/async-tree';
 import Fetch from 'ember-async-tree/mixins/fetch';
 
 const {
-  computed,
   A,
-  isNone,
-  isEmpty
+  isNone
 } = Ember;
 
 export default Ember.Component.extend(Fetch, {
@@ -22,7 +20,7 @@ export default Ember.Component.extend(Fetch, {
       this.set('openNodes', new A());
     }
   },
-
+  /* jshint ignore:start */
   didReceiveAttrs({oldAttrs: previous = {}, newAttrs: current}){
     this._super(...arguments);
     const hasNewData = previous.data !== current.data;
@@ -36,6 +34,7 @@ export default Ember.Component.extend(Fetch, {
       this.set('_setup', true);
     }
   },
+  /* jshint ignore:end */
 
   setup() {
     const fetchOnInit = this.get('fetch-on-init');

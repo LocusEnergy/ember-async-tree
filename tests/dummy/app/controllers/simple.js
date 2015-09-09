@@ -2,10 +2,11 @@
 import Ember from 'ember';
 
 const {
-  on,
   get,
   isNone
 } = Ember;
+
+const delay = Ember.testing ? 0 : 3000;
 
 export default Ember.Controller.extend({
   actions: {
@@ -32,7 +33,7 @@ export default Ember.Controller.extend({
         }
       }
       return new Ember.RSVP.Promise(function(resolve){
-        Ember.run.later(resolve, result, 3000);
+        Ember.run.later(resolve, result, delay);
       });
     }
   }
