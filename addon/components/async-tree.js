@@ -27,38 +27,23 @@ export default Ember.Component.extend({
   checkOpen: required(),
   fetch: required(),
 
-  _initialize: on('init', function(){
-    this.setupFetchOnInit();
-    this.setupInitialData();
-  }),
-  setupFetchOnInit() {
-    const expandOnlyChild = this.get('expand-only-child');
-    const fetchOnInit = this.get('fetch-on-init');
-    const hasChildren = this.get('hasChildren');
-    let promise;
-    if (!hasChildren && fetchOnInit) {
-      promise = this.fetchData();
+  didReceiveAttrs(attrs) {
+    const children = newValue(attrs, 'children');
+    const initialData = newValue(attrs, 'initialData');
+
+    if (didChange(attrs, 'children') && !isNone(children)) {
+      this.set('_children', children);
+      return;
     }
-    if (!hasChildren && fetchOnInit && expandOnlyChild) {
-      promise.then((children=[])=>{
-        if (children.length === 1) {
-          this.sendAction('open', get(children, 'firstObject'));
-        }
+
+    if (didChange(attrs, 'initialData') && !isNone(initialData)) {
+      this.setProperties({
+        _children: this.getChildren(initialData, this.get('node')),
+        isOpen: true
       });
     }
   },
-  setupInitialData: observer('initialData', function() {
-    const data = this.get('initialData');
-    if (data) {
-      const children = this.getChildren(data, this.get('node'));
-      if (!isEmpty(children)) {
-        this.setProperties({
-          children: children,
-          isOpen: true
-        });
-      }
-    }
-  }),
+
   getChildren(data, parent) {
     const childrenFilter = this.get('children-filter') || this.get('childrenFilter');
     return childrenFilter(data, parent);
@@ -82,10 +67,10 @@ export default Ember.Component.extend({
   hasNoNode: computed.none('node'),
   hasNode: computed.not('hasNoNode'),
   hasChildren: computed.not('hasNoChildren'),
-  hasNoChildren: computed.empty('children'),
+  hasNoChildren: computed.empty('_children'),
   hasParent: computed.not('parent'),
   hasNoParent: computed.none('parent'),
-  isNotLoaded: computed.none('children'),
+  isNotLoaded: computed.none('_children'),
   isLoaded: computed.not('isNotLoaded'),
 
   isOpen: computed('checkOpen', 'node', {
@@ -103,7 +88,7 @@ export default Ember.Component.extend({
     this.set('isLoading', true);
     let promise = this._fetch()
       .then((children)=>{
-        this.set('children', children);
+        this.set('_children', children);
         this.set('isLoading', false);
         return children;
       });
@@ -147,3 +132,21 @@ export default Ember.Component.extend({
     }
   }
 });
+
+function oldValue(attrs, key) {
+  const { oldAttrs = {} } = attrs;
+  return get(oldAttrs, `${key}.value`);
+}
+
+function newValue(attrs, key) {
+  const { newAttrs } = attrs;
+  return get(newAttrs, `${key}.value`);
+}
+
+function didChange(attrs, key) {
+  const {
+    oldAttrs = {},
+    newAttrs
+  } = attrs;
+  return get(oldAttrs, `${key}.value`) !== get(newAttrs, `${key}.value`);
+}

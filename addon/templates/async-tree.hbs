@@ -3,7 +3,7 @@
 {{/if}}
 {{#if isOpen}}
   <ul class="node-list">
-  {{#each children as |child|}}
+  {{#each _children as |child|}}
     {{#async-tree
       depth=nextDepth
       initialData=initialData
