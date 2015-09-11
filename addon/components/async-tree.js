@@ -28,7 +28,7 @@ export default Ember.Component.extend({
   fetch: required(),
 
   didReceiveAttrs(attrs) {
-    const children = newValue(attrs, 'children');
+    let children = newValue(attrs, 'children');
     const initialData = newValue(attrs, 'initialData');
 
     if (didChange(attrs, 'children') && !isNone(children)) {
@@ -37,9 +37,10 @@ export default Ember.Component.extend({
     }
 
     if (didChange(attrs, 'initialData') && !isNone(initialData)) {
+      children = this.getChildren(initialData, this.get('node'));
       this.setProperties({
-        _children: this.getChildren(initialData, this.get('node')),
-        isOpen: true
+        _children: children,
+        isOpen: children.length > 0
       });
     }
   },
