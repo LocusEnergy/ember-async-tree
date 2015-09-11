@@ -36,12 +36,16 @@ export default Ember.Component.extend({
       return;
     }
 
-    if (didChange(attrs, 'initialData') && !isNone(initialData)) {
-      children = this.getChildren(initialData, this.get('node'));
-      this.setProperties({
-        _children: children,
-        isOpen: children.length > 0
-      });
+    if (didChange(attrs, 'initialData')) {
+      if (isNone(initialData)) {
+        this.set('isOpen', false);
+      } else {
+        children = this.getChildren(initialData, this.get('node'));
+        this.setProperties({
+          _children: children,
+          isOpen: children.length > 0
+        });
+      }
     }
   },
 
