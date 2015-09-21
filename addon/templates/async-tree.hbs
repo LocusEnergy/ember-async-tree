@@ -1,5 +1,5 @@
 {{#if hasNode}}
-  <span class="node-label">{{yield node this}}</span>
+  <span class="node-label node-toggle-open" {{action "toggleOpen"}}>{{yield node this}}</span>
 {{/if}}
 {{#if isOpen}}
   <ul class="node-list">
@@ -12,9 +12,8 @@
       fetch-on-init=fetch-on-init
       tagName="li"
       fetch=fetch
-      checkOpen=checkOpen
-      open="open"
-      close="close"
+      open=this.open
+      close=this.close
       parent=node
       node=child
       as |child component|

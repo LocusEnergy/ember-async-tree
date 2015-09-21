@@ -24,8 +24,17 @@ export default Ember.Component.extend({
   "expand-only-child": false,
   "fetch-on-init": false,
 
-  checkOpen: required(),
   fetch: required(),
+
+  init() {
+    this._super(...arguments);
+    const isRoot = isNone(this.get('node'));
+    if (isRoot) {
+      this.setIsOpen(true);
+    } else if (!isEmpty(this.get('children'))) {
+      this.setIsOpen(true);
+    }
+  },
 
   didReceiveAttrs(attrs) {
     let children = newValue(attrs, 'children');
@@ -38,17 +47,20 @@ export default Ember.Component.extend({
 
     if (didChange(attrs, 'initialData')) {
       if (isNone(initialData)) {
-        this.set('isOpen', false);
+        this.setIsOpen(false);
       } else {
-        children = this.getChildren(initialData, this.get('node'));
-        this.setProperties({
-          _children: children,
-          isOpen: children.length > 0
-        });
+        const node = this.get('node');
+        children = this.getChildren(initialData, node);
+        this.set('_children', children);
+        if (children.length > 0) {
+          this.send('open', node);
+        }
       }
     }
   },
-
+  setIsOpen(value) {
+    this.set('isOpen', value);
+  },
   getChildren(data, parent) {
     const childrenFilter = this.get('children-filter') || this.get('childrenFilter');
     return childrenFilter(data, parent);
@@ -78,17 +90,6 @@ export default Ember.Component.extend({
   isNotLoaded: computed.none('_children'),
   isLoaded: computed.not('isNotLoaded'),
 
-  isOpen: computed('checkOpen', 'node', {
-    get() {
-      let node = this.get('node');
-      if (node == null) {
-        // the tree root doesn't have a root and it should always be open
-        return true;
-      }
-      let checkOpen = this.get('checkOpen');
-      return checkOpen(node);
-    }
-  }),
   fetchData: function() {
     this.set('isLoading', true);
     let promise = this._fetch()
@@ -119,21 +120,22 @@ export default Ember.Component.extend({
     let node = this.get('node');
     this.send('close', node);
   }),
-  click() {
-    let isOpen = this.get('isOpen');
-    if (isOpen) {
-      this._close();
-    } else {
-      this._open();
-    }
-    return false;
-  },
   actions: {
+    toggleOpen() {
+      let isOpen = this.get('isOpen');
+      if (isOpen) {
+        this._close();
+      } else {
+        this._open();
+      }
+    },
     open(node) {
-      this.sendAction('open', node);
+      this.attrs.open(node);
+      this.setIsOpen(true);
     },
     close(node) {
-      this.sendAction('close', node);
+      this.attrs.close(node);
+      this.setIsOpen(false);
     }
   }
 });
