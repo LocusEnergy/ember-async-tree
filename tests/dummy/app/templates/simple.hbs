@@ -4,11 +4,9 @@
   {{! // BEGIN-SNIPPET simple-template }}
     {{#async-tree
       children=model
-      fetch=fetch
-      checkHasMore=checkHasMore
-      checkOpen=checkOpen
-      open="open"
-      close="close"
+      fetch=(action "fetch")
+      open=(action "open")
+      close=(action "close")
       as |node component|
     }}{{node.name}}{{/async-tree}}
   {{! // END-SNIPPET }}

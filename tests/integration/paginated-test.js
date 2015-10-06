@@ -34,7 +34,6 @@ test('checkHasMore argument is used by hasMore', function(assert){
   });
   this.render(hbs`
     {{#async-tree
-      fetch-on-init=true
       children=initialData
       meta=meta
       fetch=fetch

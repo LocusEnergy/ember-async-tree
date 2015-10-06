@@ -1,14 +1,13 @@
 import Ember from 'ember';
 import AsyncTreeLayout from 'ember-async-tree/templates/async-tree';
-import required from 'ember-async-tree/computed/required';
 
 const {
   on,
   get,
   computed,
-  observer,
   isNone,
-  isEmpty
+  isEmpty,
+  K
 } = Ember;
 
 export default Ember.Component.extend({
@@ -21,10 +20,6 @@ export default Ember.Component.extend({
   ],
 
   depth: 0,
-  "expand-only-child": false,
-  "fetch-on-init": false,
-
-  fetch: required(),
 
   init() {
     this._super(...arguments);
@@ -52,7 +47,7 @@ export default Ember.Component.extend({
         const node = this.get('node');
         children = this.getChildren(initialData, node);
         this.set('_children', children);
-        if (children.length > 0) {
+        if (children && children.length > 0) {
           this.send('open', node);
         }
       }
@@ -130,20 +125,17 @@ export default Ember.Component.extend({
       }
     },
     open(node) {
-      this.attrs.open(node);
+      const open = this.get('open') || K;
+      open(node);
       this.setIsOpen(true);
     },
     close(node) {
-      this.attrs.close(node);
+      const close = this.get('close') || K;
+      close(node);
       this.setIsOpen(false);
     }
   }
 });
-
-function oldValue(attrs, key) {
-  const { oldAttrs = {} } = attrs;
-  return get(oldAttrs, `${key}.value`);
-}
 
 function newValue(attrs, key) {
   const { newAttrs } = attrs;
@@ -151,9 +143,7 @@ function newValue(attrs, key) {
 }
 
 function didChange(attrs, key) {
-  const {
-    oldAttrs = {},
-    newAttrs
-  } = attrs;
+  const oldAttrs = attrs.oldAttrs || {};
+  const newAttrs = attrs.newAttrs;
   return get(oldAttrs, `${key}.value`) !== get(newAttrs, `${key}.value`);
 }
