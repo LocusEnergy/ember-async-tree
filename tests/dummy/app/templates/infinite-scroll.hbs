@@ -1,0 +1,31 @@
+<div class="simple infinite-scroll mdl-cell mdl-cell--12-col-desktop">
+  <h3>Infinite Scroll Async Tree</h3>
+
+  {{! // BEGIN-SNIPPET infinite-scroll-template }}
+  <div class="infinite-scroll-container">
+    {{#async-tree
+      scroll-selector='.infinite-scroll-container'
+      children=initialData
+      meta=initialData.meta
+      fetch=(action 'fetch')
+      check-has-more=(action 'checkHasMore')
+      open=(action 'open')
+      close=(action 'close')
+      as |node component|
+    }}{{node.name}}{{/async-tree}}
+  </div>
+  {{! // END-SNIPPET }}
+
+  <h4>Template</h4>
+  {{code-snippet name="infinite-scroll-template.hbs"}}
+
+  <h4>Route</h4>
+  {{code-snippet name="infinite-scroll-route.js"}}
+
+  <h4>Controller</h4>
+  {{code-snippet name="infinite-scroll-controller.js"}}
+
+  <h4>CSS</h4>
+  {{code-snippet name="infinite-scroll-scss.scss"}}
+
+</div>

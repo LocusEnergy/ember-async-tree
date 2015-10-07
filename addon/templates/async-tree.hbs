@@ -22,6 +22,9 @@
   {{/each}}
   </ul>
   {{#if hasMore}}
-    <span class="load-more" {{action 'more' node meta}}>More</span>
+    {{#async-more
+      scroll-selector=scroll-selector
+      on-enter-viewport=(action 'more' node meta)
+    }}More{{/async-more}}
   {{/if}}
 {{/if}}

@@ -1,0 +1,30 @@
+.infinite-scroll {
+  // BEGIN-SNIPPET infinite-scroll-scss
+  .infinite-scroll-container {
+    height: 300px;
+    width: 400px;
+    overflow: auto;
+  }
+
+  .async-tree {
+    .node-list {
+      list-style: none;
+      padding-left: 10px;
+    }
+    .node-label:before {
+      display: inline-block;
+      height: 20px;
+      width: 20px;
+    }
+    .is-open .node-label::before {
+      content: '-';
+    }
+    .is-not-open .node-label::before {
+      content: '+';
+    }
+    .is-loading .node-label::before {
+      content: '⏳';
+    }
+  }
+  // END-SNIPPET
+}
