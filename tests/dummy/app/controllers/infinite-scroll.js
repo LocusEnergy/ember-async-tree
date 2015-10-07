@@ -1,4 +1,5 @@
 import Ember from 'ember';
+import range from 'lodash/utility/range';
 
 export default Ember.Controller.extend({
   init() {
@@ -24,6 +25,14 @@ export default Ember.Controller.extend({
       this.get('openNodes').removeObject(node);
     },
     fetch(node, meta = {}) {
+      if (node) {
+        const {name} = node;
+        return range(50).map(function(i){
+          return {
+            name: `Item ${i} (child of ${name})`
+          }
+        });
+      }
       const { last } = meta;
       const more = this.getMore(last, 50);
       return new Ember.RSVP.Promise((resolve)=>{
