@@ -8,17 +8,13 @@ moduleForComponent('paginated', {
 
 test('checkHasMore argument is used by hasMore', function(assert){
   const initialData = makeData(5);
-  const [ firstNode ] = initialData;
-  let checkHasMoreCallCount = 0;
+  let checkHasMoreCalled;
   this.set('initialData', initialData);
   this.set('meta', {
     page: 1,
     pages: 5
   });
-  this.set('checkOpen', function(node){
-    return node === firstNode;
-  });
-  this.set('fetch', function(){
+  this.on('fetch', function(){
     let result = makeData(5);
     result.meta = {
       page: 1,
@@ -26,23 +22,20 @@ test('checkHasMore argument is used by hasMore', function(assert){
     };
     return result;
   });
-  this.set('checkHasMore', function(node){
-    if (node) {
-      checkHasMoreCallCount++;
-    }
-    return node === firstNode;
+  this.on('checkHasMore', function(){
+    checkHasMoreCalled = true;
+    return true;
   });
   this.render(hbs`
     {{#async-tree
-      children=initialData
       meta=meta
-      fetch=fetch
-      checkOpen=checkOpen
-      checkHasMore=checkHasMore
+      children=initialData
+      fetch=(action 'fetch')
+      check-has-more=(action 'checkHasMore')
       as |node|
     }}{{node.name}}{{/async-tree}}
   `);
-  assert.equal(checkHasMoreCallCount, 2, "checkHasMore called twice");
+  assert.ok(checkHasMoreCalled, "checkHasMore was called");
 });
 
 function makeData() {

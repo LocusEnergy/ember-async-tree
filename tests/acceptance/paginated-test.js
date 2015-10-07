@@ -27,7 +27,7 @@ test('tree rendering', function(assert) {
     assert.equal($('.async-tree ul li:contains("(from model)")').length, 10, '10 items from model are rendered');
     assert.equal($('.async-tree ul li:contains("from: controller)")').length, 10, '10 items from controller are rendered');
   });
-  click('.toggle-open:contains("Item 0 (from model)")');
+  click('.node-toggle-open:contains("Item 0 (from model)")');
   andThen(function(){
     assert.ok($('.async-tree ul li:contains("Item 0 (from model)")').hasClass('is-open'), 'Item 0 (from model) is open');
     assert.equal($('.async-tree ul li > ul li:contains("(page: 1, from: controller)")').length, 10, "10 items shown after first item");

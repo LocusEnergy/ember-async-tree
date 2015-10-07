@@ -5,11 +5,10 @@
     {{#async-tree
       children=model
       meta=model.meta
-      fetch=fetch
-      checkOpen=checkOpen
-      checkHasMore=checkHasMore
-      open="open"
-      close="close"
+      fetch=(action 'fetch')
+      check-has-more=(action 'checkHasMore')
+      open=(action 'open')
+      close=(action 'close')
       as |node component|
     }}{{node.name}}{{/async-tree}}
   {{! // END-SNIPPET }}

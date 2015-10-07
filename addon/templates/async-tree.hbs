@@ -9,6 +9,7 @@
       initialData=initialData
       children-filter=children-filter
       tagName="li"
+      check-has-more=check-has-more
       fetch=fetch
       open=open
       close=close
@@ -20,4 +21,7 @@
     {{/async-tree}}
   {{/each}}
   </ul>
+  {{#if hasMore}}
+    <span class="load-more" {{action 'more' node meta}}>More</span>
+  {{/if}}
 {{/if}}
