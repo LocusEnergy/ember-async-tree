@@ -1,5 +1,4 @@
 import Ember from 'ember';
-import AsyncTreeLayout from 'ember-async-tree/templates/async-tree';
 
 const {
   get,
@@ -11,7 +10,6 @@ const {
 } = Ember;
 
 export default Ember.Component.extend({
-  layout: AsyncTreeLayout,
   classNameBindings: [
     'hasNoNode:async-tree:async-tree-node',
     'isOpen:is-open:is-not-open',

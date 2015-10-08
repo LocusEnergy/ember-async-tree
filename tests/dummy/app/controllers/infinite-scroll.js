@@ -30,7 +30,7 @@ export default Ember.Controller.extend({
         return range(50).map(function(i){
           return {
             name: `Item ${i} (child of ${name})`
-          }
+          };
         });
       }
       const { last } = meta;
