@@ -3,13 +3,14 @@ import Ember from 'ember';
 import range from 'lodash/utility/range';
 
 const {
-  on
+  on,
+  A
 } = Ember;
 
 export default Ember.Controller.extend({
   openNodes: null,
   initialize: on('init', function(){
-    this.set('openNodes', []);
+    this.set('openNodes', new A([]));
   }),
   actions: {
     open(node) {

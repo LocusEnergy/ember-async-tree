@@ -4,6 +4,7 @@
   {{! // BEGIN-SNIPPET infinite-scroll-template }}
   <div class="infinite-scroll-container">
     {{#async-tree
+      infinite=true
       scroll-selector='.infinite-scroll-container'
       children=initialData
       meta=initialData.meta

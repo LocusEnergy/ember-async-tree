@@ -22,9 +22,13 @@
   {{/each}}
   </ul>
   {{#if hasMore}}
-    {{#async-more
-      scroll-selector=scroll-selector
-      on-enter-viewport=(action 'more' node meta)
-    }}More{{/async-more}}
+    {{#if infinite}}
+      {{#async-more
+        scroll-selector=scroll-selector
+        on-enter-viewport=(action 'more' node meta)
+      }}More{{/async-more}}
+    {{else}}
+        <span class="load-more" {{action 'more' node meta}}>More</span>
+    {{/if}}
   {{/if}}
 {{/if}}

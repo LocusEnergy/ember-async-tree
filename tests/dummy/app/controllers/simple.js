@@ -2,13 +2,14 @@
 import Ember from 'ember';
 
 const {
-  get
+  get,
+  A
 } = Ember;
 
 export default Ember.Controller.extend({
   init() {
     this._super();
-    this.set('openNodes', []);
+    this.set('openNodes', new A([]));
   },
   actions: {
     open(node) {
