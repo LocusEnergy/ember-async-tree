@@ -1,1 +1,3 @@
-export { AsyncTreeComponent as default } from 'ember-async-tree/components/async-tree';
+import AsyncTreeComponent from 'ember-async-tree/components/async-tree';
+
+export default AsyncTreeComponent;
