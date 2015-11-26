@@ -5,13 +5,12 @@
     as |child|
   }}
     {{#async-tree-node
-      tagName=item-tag-name
       depth=0
       parent=node
       node=child
 
       initialFilter=(action "initialFilter")
-      fetch=(action "fetch")
+      fetch=(action "fetchChildren")
       open=(action "open")
       close=(action "close")
       as |child component|
@@ -21,5 +20,5 @@
   {{/ember-collection}}
 </div>
 {{#if hasMore}}
-  {{#async-more infinite=infinite on-render=(action 'more' node meta)}}More{{/async-more}}
+  {{#async-more infinite=infinite on-render=(action 'fetchMore' meta)}}More{{/async-more}}
 {{/if}}

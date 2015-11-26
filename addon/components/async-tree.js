@@ -9,9 +9,7 @@ const {
 } = Ember;
 
 export default Ember.Component.extend(Loading, {
-  classNames: 'async-tree',
-
-  'item-tag-name': 'div',
+  classNameBindings: [':async-tree', 'isLoading'],
 
   'row-height': 20,
 
@@ -58,6 +56,7 @@ export default Ember.Component.extend(Loading, {
   extractMeta(children) {
     let {meta} = children;
     this.set('meta', meta);
+    return children;
   },
 
   afterFetch() {
@@ -66,17 +65,19 @@ export default Ember.Component.extend(Loading, {
 
   actions: {
     initialFilter(node) {
-      this.getInitial(node);
+      this.setupInitial(node);
     },
-    fetch(node) {
+    fetchChildren(node) {
+      let fetch = this.get('fetch');
+      this.startLoading();
+      return fetch(node).finally(this.afterFetch.bind(this));
+    },
+    fetchMore(meta) {
       let fetch = this.get('fetch');
       this.startLoading();
       return fetch(node)
         .then(this.extractMeta.bind(this))
         .finally(this.afterFetch.bind(this));
-    },
-    more(node, meta) {
-      this._fetch(node, meta);
     },
     open(node) {
       let open = this.get('open');

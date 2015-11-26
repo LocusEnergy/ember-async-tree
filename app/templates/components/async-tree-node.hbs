@@ -4,13 +4,13 @@
     {{#each _children as |child|}}
       {{#async-tree-node
         depth=nextDepth
+        parent=node
+        node=child
+
         initialFilter=initialFilter
-        tagName=tagName
         fetch=fetch
         open=open
         close=close
-        parent=node
-        node=child
         as |child component|
       }}
         {{yield child component}}
