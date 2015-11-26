@@ -1,34 +1,25 @@
-{{#if hasNode}}
-  <span class="node-label node-toggle-open" {{action "toggleOpen"}}>{{yield node this}}</span>
-{{/if}}
-{{#if isOpen}}
-  <ul class="node-list">
-  {{#each _children as |child|}}
-    {{#async-tree
-      depth=nextDepth
-      initialData=initialData
-      children-filter=children-filter
-      tagName="li"
-      check-has-more=check-has-more
-      fetch=fetch
-      open=open
-      close=close
+<div class="node-list">
+  {{#ember-collection
+    items=_children
+    cell-layout=(fixed-grid-layout 300 row-height)
+    as |child|
+  }}
+    {{#async-tree-node
+      tagName=item-tag-name
+      depth=0
       parent=node
       node=child
+
+      initialFilter=(action "initialFilter")
+      fetch=(action "fetch")
+      open=(action "open")
+      close=(action "close")
       as |child component|
     }}
       {{yield child component}}
-    {{/async-tree}}
-  {{/each}}
-  </ul>
-  {{#if hasMore}}
-    {{#if infinite}}
-      {{#async-more
-        scroll-selector=scroll-selector
-        on-enter-viewport=(action 'more' node meta)
-      }}More{{/async-more}}
-    {{else}}
-        <span class="load-more" {{action 'more' node meta}}>More</span>
-    {{/if}}
-  {{/if}}
+    {{/async-tree-node}}
+  {{/ember-collection}}
+</div>
+{{#if hasMore}}
+  {{#async-more infinite=infinite on-render=(action 'more' node meta)}}More{{/async-more}}
 {{/if}}

@@ -1,197 +1,100 @@
 import Ember from 'ember';
+import Loading from '../mixins/loading';
+import without from 'lodash/array/without';
 
 const {
-  get,
+  isPresent,
   computed,
-  isNone,
-  isEmpty,
-  K,
-  RSVP
+  isNone
 } = Ember;
 
-export default Ember.Component.extend({
-  classNameBindings: [
-    'hasNoNode:async-tree:async-tree-node',
-    'isOpen:is-open:is-not-open',
-    'isLoaded:is-loaded:is-not-loaded',
-    'isLoading:is-loading'
-  ],
+export default Ember.Component.extend(Loading, {
+  classNames: 'async-tree',
 
-  depth: 0,
+  'item-tag-name': 'div',
+
+  'row-height': 20,
 
   init() {
+    this.set('openNodes', []);
     this._super(...arguments);
-    const isRoot = isNone(this.get('node'));
-    if (isRoot) {
-      this.setIsOpen(true);
-    } else if (!isEmpty(this.get('children'))) {
-      this.setIsOpen(true);
-    }
+    this.setupInitial();
   },
 
-  didReceiveAttrs(attrs) {
-    let children = newValue(attrs, 'children');
-    const initialData = newValue(attrs, 'initialData');
+  setupInitial(node) {
+    let initial = this.get('initial');
+    let filterFn = this.get('initial-filter');
 
-    if (didChange(attrs, 'children') && !isNone(children)) {
-      this.updateChildren(children);
-      return;
-    }
-
-    if (didChange(attrs, 'initialData')) {
-      if (isNone(initialData)) {
-        this.setIsOpen(false);
+    let children;
+    if (isPresent(initial)) {
+      if (isPresent(filterFn)) {
+        children = initial.filter((item)=>{
+          return filterFn(item, node);
+        });
       } else {
-        const node = this.get('node');
-        children = this.getChildren(initialData, node);
-        this.updateChildren(children);
-        if (children && children.length > 0) {
-          this.send('open', node);
-        }
+        children = initial;
       }
+      this.set('_children', children);
     }
   },
 
-  childrenFilter: computed({
-    get() {
-      return (data) => {
-        const nextDepth = this.get('nextDepth') - 1;
-        const hasNextNode = !isNone(data[nextDepth]);
-        if (hasNextNode) {
-          return [data[nextDepth]];
-        }
-      };
+  didReceiveAttrs() {
+    let openNodes = this.set('open-nodes');
+    if (!isNone(openNodes)) {
+      this.set('openNodes', openNodes);
     }
-  }),
+  },
 
-  nextDepth: computed('depth', {
-    get() {
-      return this.get('depth') + 1;
-    }
-  }),
-
-  hasNoNode: computed.none('node'),
-  hasNode: computed.not('hasNoNode'),
-  hasChildren: computed.not('hasNoChildren'),
-  hasNoChildren: computed.empty('_children'),
-  hasParent: computed.not('parent'),
-  hasNoParent: computed.none('parent'),
-  isNotLoaded: computed.none('_children'),
-  isLoaded: computed.not('isNotLoaded'),
-
-  hasMore: computed('node', 'meta', 'check-has-more', {
+  hasMore: computed('meta', 'check-has-more', {
     get() {
       const meta = this.get('meta');
-      const node = this.get('node');
       const checkHasMore = this.get('check-has-more');
       if (meta && checkHasMore) {
-        return checkHasMore(node, meta);
+        return checkHasMore(meta);
       }
     }
   }),
 
-  setIsOpen(value) {
-    this.set('isOpen', value);
+  extractMeta(children) {
+    let {meta} = children;
+    this.set('meta', meta);
   },
 
-  getChildren(data, parent) {
-    const childrenFilter = this.get('children-filter') || this.get('childrenFilter');
-    return childrenFilter(data, parent);
-  },
-
-  updateChildren(children, isAppend=false) {
-    if (isAppend) {
-      children = (this.get('_children') || []).concat(children);
-    }
-    this.set('_children', children);
-  },
-
-  setMeta(children = []) {
-    this.set('meta', children.meta);
-  },
-
-  _fetch: function(node, meta){
-    node = node || this.get('node');
-    meta = meta || this.get('meta');
-    const isAppend = !!meta;
-
-    this.startLoading();
-    const fetch = this.get('fetch');
-    const fetched = fetch(node, meta);
-
-    const promise = fetched && fetched.then ? fetched : RSVP.resolve(fetched);
-    promise.then((children)=>{
-      this.updateChildren(children, isAppend);
-      this.setMeta(children);
-      this.finishLoading();
-      return children;
-    });
-    this.set('promise', promise);
-
-    return promise;
-  },
-
-  startLoading() {
-    this.set('isLoading', true);
-  },
-
-  finishLoading() {
-    this.set('isLoading', false);
-  },
-
-  _open() {
-    const node = this.get('node');
-    const isLoaded = this.get('isLoaded');
-    if (isLoaded) {
-      this.send('open', node);
-    } else {
-      this._fetch().then(()=>{
-        this.send('open', node);
-      });
-    }
-   },
-
-  _close(){
-    this.send('close', this.get('node'));
-  },
-
-  willDestroyElement() {
-    this._super();
-    this._close();
+  afterFetch() {
+    this.finishLoading();
   },
 
   actions: {
-    toggleOpen() {
-      let isOpen = this.get('isOpen');
-      if (isOpen) {
-        this._close();
-      } else {
-        this._open();
-      }
+    initialFilter(node) {
+      this.getInitial(node);
     },
-    open(node) {
-      const open = this.get('open') || K;
-      open(node);
-      this.setIsOpen(true);
-    },
-    close(node) {
-      const close = this.get('close') || K;
-      close(node);
-      this.setIsOpen(false);
+    fetch(node) {
+      let fetch = this.get('fetch');
+      this.startLoading();
+      return fetch(node)
+        .then(this.extractMeta.bind(this))
+        .finally(this.afterFetch.bind(this));
     },
     more(node, meta) {
       this._fetch(node, meta);
+    },
+    open(node) {
+      let open = this.get('open');
+      if (isPresent(open)) {
+        open(node);
+        return;
+      }
+      let openNodes = this.get('openNodes');
+      this.set('openNodes', openNodes.concat(node));
+    },
+    close(node) {
+      let close = this.get('close');
+      if (isPresent(close)) {
+        close(node);
+        return;
+      }
+      let openNodes = this.get('openNodes');
+      this.set('openNodes', without(openNodes, node));
     }
   }
 });
-
-function newValue(attrs, key) {
-  const { newAttrs } = attrs;
-  return get(newAttrs, `${key}.value`);
-}
-
-function didChange(attrs, key) {
-  const oldAttrs = attrs.oldAttrs || {};
-  const newAttrs = attrs.newAttrs;
-  return get(oldAttrs, `${key}.value`) !== get(newAttrs, `${key}.value`);
-}

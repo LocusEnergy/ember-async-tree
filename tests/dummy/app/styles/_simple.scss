@@ -1,6 +1,9 @@
 .simple {
   // BEGIN-SNIPPET simple-scss
   .async-tree {
+    height: 300px;
+    position: relative;
+    width: 300px;
     .node-list {
       list-style: none;
       padding-left: 10px;
