@@ -1,22 +1,14 @@
 <div class="node-list">
   {{#ember-collection
-    items=_children
+    items=visibleNodes
     cell-layout=(fixed-grid-layout 300 row-height)
-    as |child|
+    as |node|
   }}
-    {{#async-tree-node
-      depth=0
-      parent=node
-      node=child
-
-      initialFilter=(action "initialFilter")
-      fetch=(action "fetchChildren")
-      open=(action "open")
-      close=(action "close")
-      as |child component|
-    }}
-      {{yield child component}}
-    {{/async-tree-node}}
+    <div class="node-list-item">
+      <span class="async-tree-node {{if (eq _loadingNode node) 'is-loading'}}" {{action 'toggle' node}}>
+        {{yield node.content}}
+      </span>
+    </div>
   {{/ember-collection}}
 </div>
 {{#if hasMore}}

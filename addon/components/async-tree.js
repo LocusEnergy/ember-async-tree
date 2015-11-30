@@ -1,6 +1,8 @@
 import Ember from 'ember';
 import Loading from '../mixins/loading';
 import without from 'lodash/array/without';
+import Node from '../utils/node';
+import includes from 'lodash/collection/includes';
 
 const {
   isPresent,
@@ -14,34 +16,31 @@ export default Ember.Component.extend(Loading, {
   'row-height': 20,
 
   init() {
-    this.set('openNodes', []);
     this._super(...arguments);
-    this.setupInitial();
+
+    let root = new Node();
+    let openNodes = root.load(this.get('initial'), this.get('initial-filter'));
+
+    this.set('openNodes', openNodes);
   },
 
-  setupInitial(node) {
-    let initial = this.get('initial');
-    let filterFn = this.get('initial-filter');
+  setRoot(root) {
+    this.setProperties({
+      _tree: root,
+      _flattened: root.flatten()
+    });
+  },
 
-    let children;
-    if (isPresent(initial)) {
-      if (isPresent(filterFn)) {
-        children = initial.filter((item)=>{
-          return filterFn(item, node);
-        });
-      } else {
-        children = initial;
-      }
-      this.set('_children', children);
+  visibleNodes: computed('_tree', 'openNodes.[]', '_flattened.[]', {
+    get() {
+      let openNodes = this.get('openNodes');
+      let root = this.get('_tree');
+      let flattened = this.get('_flattened');
+      return flattened.filter(function(node){
+        return node.parent === root || includes(openNodes, node.parent);
+      });
     }
-  },
-
-  didReceiveAttrs() {
-    let openNodes = this.set('open-nodes');
-    if (!isNone(openNodes)) {
-      this.set('openNodes', openNodes);
-    }
-  },
+  }),
 
   hasMore: computed('meta', 'check-has-more', {
     get() {
@@ -78,24 +77,6 @@ export default Ember.Component.extend(Loading, {
       return fetch(node)
         .then(this.extractMeta.bind(this))
         .finally(this.afterFetch.bind(this));
-    },
-    open(node) {
-      let open = this.get('open');
-      if (isPresent(open)) {
-        open(node);
-        return;
-      }
-      let openNodes = this.get('openNodes');
-      this.set('openNodes', openNodes.concat(node));
-    },
-    close(node) {
-      let close = this.get('close');
-      if (isPresent(close)) {
-        close(node);
-        return;
-      }
-      let openNodes = this.get('openNodes');
-      this.set('openNodes', without(openNodes, node));
     }
   }
 });
