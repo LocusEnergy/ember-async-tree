@@ -1,10 +1,10 @@
 <div class="node-list {{if isLoading 'is-loading'}}">
   {{#ember-collection
     items=visibleNodes
-    cell-layout=(fixed-grid-layout 300 row-height)
+    cell-layout=(fixed-grid-layout width row-height)
     as |node|
   }}
-    <div class="node-list-item">
+    <div class="node-list-item" style="{{node-style style node bind=this}}">
       <span class="async-tree-node
                   {{if node.isLoading 'is-loading'}}
                   {{if (array-contains openNodes node) 'is-open' 'is-not-open'}}"

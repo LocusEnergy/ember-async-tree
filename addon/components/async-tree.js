@@ -13,6 +13,8 @@ export default Ember.Component.extend(Loading, {
   classNameBindings: [':async-tree', 'isLoading'],
 
   'row-height': 20,
+  width: 300,
+  indentation: 20,
 
   init() {
     this._super(...arguments);
@@ -126,6 +128,12 @@ export default Ember.Component.extend(Loading, {
     });
 
     return promise;
+  },
+
+  style: function(node) {
+    let { depth } = node;
+    let indentation = this.get('indentation');
+    return `margin-left: ${indentation * depth}px`;
   },
 
   actions: {
