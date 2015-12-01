@@ -18,8 +18,8 @@ test('tree rendering', function(assert) {
   andThen(function() {
     assert.equal(currentURL(), '/paginated', 'on paginated route');
     assert.ok($('.async-tree').length === 1, 'async-tree component is rendered');
-    assert.equal($('.async-tree ul li').length, 10, '10 items are rendered');
-    assert.equal($('.async-tree ul li:contains("(from model)")').length, 10, '10 items from model are rendered');
+    assert.equal($('.async-tree-node').length, 10, '10 items are rendered');
+    assert.equal($('.async-tree-node:contains("(from model)")').length, 10, '10 items from model are rendered');
     assert.equal($('.async-tree .load-more').length, 1, 'load more link is visible');
   });
   click('span:contains(More)');

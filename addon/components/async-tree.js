@@ -34,16 +34,29 @@ export default Ember.Component.extend(Loading, {
     });
   },
 
-  visibleNodes: computed('_root', 'openNodes.[]', '_flattened.[]', {
-    get() {
-      let openNodes = this.get('openNodes');
-      let root = this.get('_root');
-      let flattened = this.get('_flattened');
-      return flattened.filter(function(node){
-        return node.parent === root || node.hasAllParents(openNodes);
-      });
+  visibleNodes: computed(
+    '_root',
+    'openNodes.[]',
+    '_flattened.[]',
+    'hasMore', {
+      get() {
+        let openNodes = this.get('openNodes');
+        let root = this.get('_root');
+        let flattened = this.get('_flattened');
+        let hasMore = this.get('hasMore');
+
+        let visible = flattened.filter(function (node) {
+          return node.parent === root || node.hasAllParents(openNodes);
+        });
+
+        if (hasMore) {
+          return visible.concat({isMore: true});
+        }
+
+        return visible;
+      }
     }
-  }),
+  ),
 
   hasMore: computed('meta', 'check-has-more', {
     get() {
@@ -112,8 +125,8 @@ export default Ember.Component.extend(Loading, {
     this.closeNode(node);
   },
 
-  _fetch(node){
-    let { content, meta } = node;
+  _fetch(node, meta){
+    let { content } = node;
 
     this.startLoading(node);
     let fetch = this.get('fetch');
@@ -133,8 +146,8 @@ export default Ember.Component.extend(Loading, {
     return `margin-left: ${indentation * depth}px`;
   },
 
-  saveMeta(node, meta) {
-    set(node, 'meta', meta);
+  saveMeta(meta) {
+    this.set('meta', meta);
   },
 
   actions: {
@@ -147,10 +160,12 @@ export default Ember.Component.extend(Loading, {
         this._open(node);
       }
     },
-    fetchMore(node) {
-      this._fetch(node).then((children)=>{
+    fetchMore(meta) {
+      let node = this.get('_root');
+      this._fetch(node, meta).then((children)=>{
+        this.addChildren(node, children);
         let { meta } = children;
-        this.saveMeta(node, meta);
+        this.saveMeta(meta);
         return children;
       });
     }
