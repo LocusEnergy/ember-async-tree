@@ -1,8 +1,8 @@
 import Ember from 'ember';
-import Loading from '../mixins/loading';
 import without from 'lodash/array/without';
 import Node from '../utils/node';
 import includes from 'lodash/collection/includes';
+import ResizeAware from 'ember-resize/mixins/resize-aware';
 
 const {
   computed,
@@ -11,11 +11,10 @@ const {
   isEmpty
 } = Ember;
 
-export default Ember.Component.extend(Loading, {
+export default Ember.Component.extend(ResizeAware, {
   classNameBindings: [':async-tree', 'isLoading'],
 
   'row-height': 20,
-  width: 300,
   indentation: 20,
 
   init() {
@@ -25,6 +24,16 @@ export default Ember.Component.extend(Loading, {
 
     this.setRoot(root);
     this.set('openNodes', openNodes);
+  },
+
+  didInsertElement() {
+    this._super(...arguments);
+
+    this.set('width', this.$().width());
+  },
+
+  didResize(width) {
+    this.set('width', width);
   },
 
   setRoot(root) {
