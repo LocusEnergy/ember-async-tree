@@ -2,7 +2,8 @@ import {module, test} from 'qunit';
 import Node from 'ember-async-tree/utils/node';
 
 const {
-  isNone
+  isNone,
+  get
 } = Ember;
 
 module('unit: Node class');
@@ -126,3 +127,25 @@ test('node.load injects nodes into tree and returns array of open nodes', functi
   assert.ok(root.hasChild(THIRD_PARENT), 'third parent is child of root');
 
 });
+
+test('node.parents() returns array of parents', function(assert){
+
+  let root = new Node();
+
+  let firstParent = root.addChild(FIRST_PARENT);
+
+  let firstChild = firstParent.addChild(FIRST_CHILD);
+
+  let firstGrandchild = firstChild.addChild(FIRST_GRANDCHILD);
+
+  assert.deepEqual(getNames(firstParent.parents()), []);
+  assert.deepEqual(getNames(firstChild.parents()), [ 'first parent' ]);
+  assert.deepEqual(getNames(firstGrandchild.parents()), [ 'first child', 'first parent' ]);
+
+});
+
+function getNames(nodes) {
+  return nodes.map(function(node){
+    return get(node, 'content.name');
+  });
+}

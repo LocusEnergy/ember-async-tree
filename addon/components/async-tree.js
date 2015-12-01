@@ -7,7 +7,8 @@ import includes from 'lodash/collection/includes';
 const {
   computed,
   set,
-  RSVP
+  RSVP,
+  isEmpty
 } = Ember;
 
 export default Ember.Component.extend(Loading, {
@@ -39,7 +40,7 @@ export default Ember.Component.extend(Loading, {
       let root = this.get('_root');
       let flattened = this.get('_flattened');
       return flattened.filter(function(node){
-        return node.parent === root || includes(openNodes, node.parent);
+        return node.parent === root || node.hasAllParents(openNodes);
       });
     }
   }),
@@ -79,7 +80,7 @@ export default Ember.Component.extend(Loading, {
   },
 
   markLoaded(node) {
-    set(node, 'isLoaded', true);
+    node.markLoaded();
   },
 
   openNode(node) {
@@ -98,7 +99,9 @@ export default Ember.Component.extend(Loading, {
       return;
     }
     this._fetch(node).then((children)=>{
-      this.addChildren(node, children);
+      if (!isEmpty(children)) {
+        this.addChildren(node, children);
+      }
       this.markLoaded(node);
       this.openNode(node);
       return children;

@@ -3,10 +3,12 @@ import flattenDeep from 'lodash/array/flattenDeep';
 import invoke from 'lodash/collection/invoke';
 import compact from 'lodash/array/compact';
 import toArray from 'lodash/lang/toArray';
+import intersection from 'lodash/array/intersection';
 
 const {
   isEmpty,
-  isPresent
+  isPresent,
+  set
 } = Ember;
 
 export default class Node {
@@ -15,10 +17,16 @@ export default class Node {
     this.parent = parent;
     this.content = options.content;
     this.depth = options.depth == null ? -1 : options.depth;
-    this.children = new Ember.Map();
+    this.children = new Map();
 
     this.isLoading = false;
     this.isLoaded = false;
+    this.isEmpty = null;
+  }
+
+  markLoaded() {
+    this.isLoaded = true;
+    set(this, 'isEmpty', this.children.size === 0);
   }
 
   addChildren(children) {
@@ -55,6 +63,15 @@ export default class Node {
     }
     branch.push(invoke(this.getChildren(), 'flatten'));
     return toArray(compact(flattenDeep(branch)));
+  }
+
+  parents() {
+    return getParents(this.parent);
+  }
+
+  hasAllParents(openNodes) {
+    let parents = this.parents();
+    return intersection(parents, openNodes).length === parents.length;
   }
 
   /**
@@ -96,4 +113,12 @@ function getChildren(items, filter, node) {
   }
 
   return _openNodes;
+}
+
+function getParents(node) {
+  let { parent } = node;
+  if (parent == null) {
+    return [];
+  }
+  return [node].concat(getParents(parent));
 }

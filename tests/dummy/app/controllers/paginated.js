@@ -8,17 +8,7 @@ const {
 } = Ember;
 
 export default Ember.Controller.extend({
-  openNodes: null,
-  initialize: on('init', function(){
-    this.set('openNodes', new A([]));
-  }),
   actions: {
-    open(node) {
-      this.get('openNodes').addObject(node);
-    },
-    close(node) {
-      this.get('openNodes').removeObject(node);
-    },
     fetch(node, meta){
       let isLoadingMore = !!meta;
       let page, offset;
