@@ -5,7 +5,8 @@ import Node from '../utils/node';
 import includes from 'lodash/collection/includes';
 
 const {
-  computed
+  computed,
+  set
 } = Ember;
 
 export default Ember.Component.extend(Loading, {
@@ -57,11 +58,13 @@ export default Ember.Component.extend(Loading, {
   },
 
   startLoading(node) {
-    this.set('_loadingNode', node);
+    this.set('isLoading', node);
+    set(node, 'isLoading', true);
   },
 
-  finishLoading() {
-    this.set('_loadingNode', null);
+  finishLoading(node) {
+    this.set('isLoading', null);
+    set(node, 'isLoading', false);
   },
 
   afterFetch() {
@@ -78,6 +81,10 @@ export default Ember.Component.extend(Loading, {
     this.updateFlattened();
   },
 
+  markLoaded(node) {
+    set(node, 'isLoaded', true);
+  },
+
   openNode(node) {
     let openNodes = this.get('openNodes');
     this.set('openNodes', openNodes.concat(node));
@@ -89,8 +96,13 @@ export default Ember.Component.extend(Loading, {
   },
 
   _open(node) {
+    if (node.isLoaded) {
+      this.openNode(node);
+      return;
+    }
     this._fetch(node).then((children)=>{
       this.addChildren(node, children);
+      this.markLoaded(node);
       this.openNode(node);
       return children;
     });
@@ -109,7 +121,9 @@ export default Ember.Component.extend(Loading, {
 
     let promise = fetched && fetched.then ? fetched : RSVP.resolve(fetched);
 
-    promise.finally(this.finishLoading.bind(this));
+    promise.finally(()=>{
+      this.finishLoading(node);
+    });
 
     return promise;
   },
