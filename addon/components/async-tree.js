@@ -6,7 +6,8 @@ import includes from 'lodash/collection/includes';
 
 const {
   computed,
-  set
+  set,
+  RSVP
 } = Ember;
 
 export default Ember.Component.extend(Loading, {
@@ -52,12 +53,6 @@ export default Ember.Component.extend(Loading, {
       }
     }
   }),
-
-  extractMeta(children) {
-    let {meta} = children;
-    this.set('meta', meta);
-    return children;
-  },
 
   startLoading(node) {
     this.set('isLoading', node);
@@ -115,11 +110,11 @@ export default Ember.Component.extend(Loading, {
   },
 
   _fetch(node){
-    let { content } = node;
+    let { content, meta } = node;
 
     this.startLoading(node);
     let fetch = this.get('fetch');
-    let fetched = fetch(content);
+    let fetched = fetch(content, meta);
 
     let promise = fetched && fetched.then ? fetched : RSVP.resolve(fetched);
 
@@ -130,10 +125,13 @@ export default Ember.Component.extend(Loading, {
     return promise;
   },
 
-  style: function(node) {
-    let { depth } = node;
+  style({ depth }) {
     let indentation = this.get('indentation');
     return `margin-left: ${indentation * depth}px`;
+  },
+
+  saveMeta(node, meta) {
+    set(node, 'meta', meta);
   },
 
   actions: {
@@ -146,17 +144,12 @@ export default Ember.Component.extend(Loading, {
         this._open(node);
       }
     },
-    fetchChildren(node) {
-      let fetch = this.get('fetch');
-      this.startLoading();
-      return fetch(node).finally(this.afterFetch.bind(this));
-    },
-    fetchMore(meta) {
-      let fetch = this.get('fetch');
-      this.startLoading();
-      return fetch(node)
-        .then(this.extractMeta.bind(this))
-        .finally(this.afterFetch.bind(this));
+    fetchMore(node) {
+      this._fetch(node).then((children)=>{
+        let { meta } = children;
+        this.saveMeta(node, meta);
+        return children;
+      });
     }
   }
 });

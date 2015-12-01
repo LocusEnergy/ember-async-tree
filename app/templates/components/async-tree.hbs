@@ -5,13 +5,7 @@
     as |node|
   }}
     <div class="node-list-item" style="{{node-style style node bind=this}}">
-      <span class="async-tree-node
-                  {{if node.isLoading 'is-loading'}}
-                  {{if (array-contains openNodes node) 'is-open' 'is-not-open'}}"
-                  {{action 'toggle' node}}
-                  >
-        {{yield node.content}}
-      </span>
+      <span class="async-tree-node {{if node.isLoading 'is-loading'}} {{if (array-contains openNodes node) 'is-open' 'is-not-open'}}" {{action 'toggle' node}}>{{yield node.content}}</span>
     </div>
   {{/ember-collection}}
 </div>

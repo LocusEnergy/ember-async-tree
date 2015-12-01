@@ -78,7 +78,7 @@ function getChildren(items, filter, node) {
 
   let children;
   if (filter) {
-    children = filter(items, content)
+    children = filter(items, content);
   } else if (isRoot) {
     children = items;
   }
