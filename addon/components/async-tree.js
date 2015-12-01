@@ -5,9 +5,7 @@ import Node from '../utils/node';
 import includes from 'lodash/collection/includes';
 
 const {
-  isPresent,
-  computed,
-  isNone
+  computed
 } = Ember;
 
 export default Ember.Component.extend(Loading, {
@@ -18,23 +16,23 @@ export default Ember.Component.extend(Loading, {
   init() {
     this._super(...arguments);
 
-    let root = new Node();
-    let openNodes = root.load(this.get('initial'), this.get('initial-filter'));
+    let { root, openNodes } = Node.load(this.get('initial'), this.get('initial-filter'));
 
+    this.setRoot(root);
     this.set('openNodes', openNodes);
   },
 
   setRoot(root) {
     this.setProperties({
-      _tree: root,
+      _root: root,
       _flattened: root.flatten()
     });
   },
 
-  visibleNodes: computed('_tree', 'openNodes.[]', '_flattened.[]', {
+  visibleNodes: computed('_root', 'openNodes.[]', '_flattened.[]', {
     get() {
       let openNodes = this.get('openNodes');
-      let root = this.get('_tree');
+      let root = this.get('_root');
       let flattened = this.get('_flattened');
       return flattened.filter(function(node){
         return node.parent === root || includes(openNodes, node.parent);
@@ -58,13 +56,73 @@ export default Ember.Component.extend(Loading, {
     return children;
   },
 
+  startLoading(node) {
+    this.set('_loadingNode', node);
+  },
+
+  finishLoading() {
+    this.set('_loadingNode', null);
+  },
+
   afterFetch() {
     this.finishLoading();
   },
 
+  updateFlattened() {
+    let root = this.get('_root');
+    this.set('_flattened', root.flatten());
+  },
+
+  addChildren(node, children) {
+    node.addChildren(children);
+    this.updateFlattened();
+  },
+
+  openNode(node) {
+    let openNodes = this.get('openNodes');
+    this.set('openNodes', openNodes.concat(node));
+  },
+
+  closeNode(node) {
+    let openNodes = this.get('openNodes');
+    this.set('openNodes', without(openNodes, node));
+  },
+
+  _open(node) {
+    this._fetch(node).then((children)=>{
+      this.addChildren(node, children);
+      this.openNode(node);
+      return children;
+    });
+  },
+
+  _close(node) {
+    this.closeNode(node);
+  },
+
+  _fetch(node){
+    let { content } = node;
+
+    this.startLoading(node);
+    let fetch = this.get('fetch');
+    let fetched = fetch(content);
+
+    let promise = fetched && fetched.then ? fetched : RSVP.resolve(fetched);
+
+    promise.finally(this.finishLoading.bind(this));
+
+    return promise;
+  },
+
   actions: {
-    initialFilter(node) {
-      this.setupInitial(node);
+    toggle(node) {
+      let openNodes = this.get('openNodes');
+      let isOpen = includes(openNodes, node);
+      if (isOpen) {
+        this._close(node);
+      } else {
+        this._open(node);
+      }
     },
     fetchChildren(node) {
       let fetch = this.get('fetch');

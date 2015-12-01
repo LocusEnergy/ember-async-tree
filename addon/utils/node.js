@@ -4,8 +4,14 @@ import invoke from 'lodash/collection/invoke';
 import compact from 'lodash/array/compact';
 import toArray from 'lodash/lang/toArray';
 
+const {
+  isEmpty,
+  isPresent
+} = Ember;
+
 export default class Node {
-  constructor(options = {}, parent) {
+  constructor(options, parent) {
+    options = options || {};
     this.parent = parent;
     this.content = options.content;
     this.depth = options.depth == null ? -1 : options.depth;
@@ -35,6 +41,10 @@ export default class Node {
     return children;
   }
 
+  hasChild(item) {
+    return this.children.has(item);
+  }
+
   flatten() {
     let branch = [];
     if (this.content) {
@@ -43,4 +53,44 @@ export default class Node {
     branch.push(invoke(this.getChildren(), 'flatten'));
     return toArray(compact(flattenDeep(branch)));
   }
+
+  /**
+   * Return a tree with populated with data provided
+   * @param items array
+   * @param filter callback
+   */
+  static load(items, filter) {
+    let root = new Node();
+    return {
+      root,
+      openNodes: getChildren(items, filter, root)
+    };
+  }
+}
+
+function getChildren(items, filter, node) {
+  let { content } = node;
+  let isRoot = content === undefined;
+  let _openNodes = [];
+
+  let children;
+  if (filter) {
+    children = filter(items, content)
+  } else if (isRoot) {
+    children = items;
+  }
+
+  let nodeHasChildren = !isEmpty(children);
+
+  if (nodeHasChildren) {
+    let childNodes = node.addChildren(children);
+    childNodes.forEach(function(childNode){
+      _openNodes = _openNodes.concat(getChildren(items, filter, childNode));
+    });
+    if (isPresent(content)) {
+      _openNodes.push(node);
+    }
+  }
+
+  return _openNodes;
 }

@@ -5,7 +5,11 @@
     as |node|
   }}
     <div class="node-list-item">
-      <span class="async-tree-node {{if (eq _loadingNode node) 'is-loading'}}" {{action 'toggle' node}}>
+      <span class="async-tree-node
+                  {{if (eq _loadingNode node) 'is-loading'}}
+                  {{if (array-contains openNodes node) 'is-open' 'is-not-open'}}"
+                  {{action 'toggle' node}}
+                  >
         {{yield node.content}}
       </span>
     </div>
