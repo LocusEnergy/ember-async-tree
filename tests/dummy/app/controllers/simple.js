@@ -2,8 +2,8 @@
 import Ember from 'ember';
 
 const {
-  get,
-  A
+  get
+
 } = Ember;
 
 export default Ember.Controller.extend({
