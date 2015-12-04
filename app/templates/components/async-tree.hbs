@@ -1,5 +1,6 @@
 <div class="node-list {{if isLoading 'is-loading'}}">
   {{#ember-collection
+    classNames="ember-collection"
     items=visibleNodes
     cell-layout=(fixed-grid-layout width row-height)
     as |node|

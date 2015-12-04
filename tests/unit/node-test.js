@@ -1,6 +1,18 @@
 import Ember from 'ember';
-import {module, test} from 'qunit';
+import { module, test } from 'qunit';
+
 import Node from 'ember-async-tree/utils/node';
+import {
+  FIRST_PARENT,
+  SECOND_PARENT,
+  THIRD_PARENT,
+  FIRST_CHILD,
+  SECOND_CHILD,
+  THIRD_CHILD,
+  FIRST_GRANDCHILD,
+  SECOND_GRANDCHILD,
+  THIRD_GRANDCHILD
+} from '../helpers/constants';
 
 const {
   isNone,
@@ -8,16 +20,6 @@ const {
 } = Ember;
 
 module('unit: Node class');
-
-const FIRST_PARENT = { name: 'first parent', type: 'parent' };
-const SECOND_PARENT = { name: 'second parent', type: 'parent' };
-const THIRD_PARENT = { name: 'third parent', type: 'parent' };
-const FIRST_CHILD = { name: 'first child', type: 'child' };
-const SECOND_CHILD = { name: 'second child', type: 'child' };
-const THIRD_CHILD = { name: 'third child', type: 'child' };
-const FIRST_GRANDCHILD = { name: 'first grandchild'};
-const SECOND_GRANDCHILD = { name: 'second grandchild' };
-const THIRD_GRANDCHILD = { name: 'third grandchild' };
 
 test('adding children creates a tree of nodes', function(assert){
 

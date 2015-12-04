@@ -8,22 +8,33 @@ const {
   computed,
   set,
   RSVP,
-  isEmpty
+  isEmpty,
+  isNone,
+  Component
 } = Ember;
 
-export default Ember.Component.extend(ResizeAware, {
+export default Component.extend(ResizeAware, {
+  resizeDebouncedEventsEnabled: false,
   classNameBindings: [':async-tree', 'isLoading'],
 
   'row-height': 20,
   indentation: 20,
 
-  init() {
+  isInitialChanged: computed(
+    'initial',
+    '_initial',
+    'initial-filter',
+    '_initial-filter', {
+      get() {
+        return this.get('initial') !== this.get('_initial') ||
+               this.get('initial-filter') !== this.get('_initial-filter');
+      }
+  }),
+
+  didReceiveAttrs() {
     this._super(...arguments);
 
-    let { root, openNodes } = Node.load(this.get('initial'), this.get('initial-filter'));
-
-    this.setRoot(root);
-    this.set('openNodes', openNodes);
+    this.updateInitial();
   },
 
   didInsertElement() {
@@ -32,15 +43,28 @@ export default Ember.Component.extend(ResizeAware, {
     this.set('width', this.$().width());
   },
 
+  updateInitial() {
+    if (this.get('isInitialChanged')) {
+      let initial = this.get('initial');
+      let initialFilter = this.get('initial-filter');
+      let { root, openNodes } = Node.load(initial, initialFilter);
+
+      this.setRoot(root);
+      this.setProperties({
+        openNodes,
+        _initial: initial,
+        '_initial-filter': initialFilter
+      });
+    }
+  },
+
   didResize(width) {
     this.set('width', width);
   },
 
   setRoot(root) {
-    this.setProperties({
-      _root: root,
-      _flattened: root.flatten()
-    });
+    this.set('_root', root);
+    this.updateFlattened();
   },
 
   visibleNodes: computed(
@@ -49,8 +73,12 @@ export default Ember.Component.extend(ResizeAware, {
     '_flattened.[]',
     'hasMore', {
       get() {
-        let openNodes = this.get('openNodes');
         let root = this.get('_root');
+        if (isNone(root)) {
+          return;
+        }
+
+        let openNodes = this.get('openNodes');
         let flattened = this.get('_flattened');
         let hasMore = this.get('hasMore');
 
@@ -160,6 +188,7 @@ export default Ember.Component.extend(ResizeAware, {
   },
 
   actions: {
+
     toggle(node) {
       let openNodes = this.get('openNodes');
       let isOpen = includes(openNodes, node);
@@ -169,6 +198,7 @@ export default Ember.Component.extend(ResizeAware, {
         this._open(node);
       }
     },
+
     fetchMore(meta) {
       let node = this.get('_root');
       this._fetch(node, meta).then((children)=>{
@@ -178,5 +208,6 @@ export default Ember.Component.extend(ResizeAware, {
         return children;
       });
     }
+
   }
 });
