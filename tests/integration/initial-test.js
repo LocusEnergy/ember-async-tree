@@ -12,14 +12,12 @@ import {
   FILTER
 } from '../helpers/constants';
 
-import ResizeService from 'ember-resize/services/resize';
 import AsyncTreePageObject from 'ember-async-tree/tests/page-object';
 
 moduleForComponent('async-tree', 'integration: initial values', {
   integration: true,
   beforeEach() {
-    this.asyncTree = new AsyncTreePageObject(this);
-    setupResizeService(this);
+    this.asyncTree = new AsyncTreePageObject(this, true);
   }
 });
 
@@ -89,9 +87,3 @@ test('changing initial value rebuilds the tree', function(assert){
   assert.ok(this.asyncTree.itemContains('second child').hasClass('is-open'));
   assert.ok(this.asyncTree.itemContains('second grandchild').hasClass('is-not-open'));
 });
-
-
-function setupResizeService(test) {
-  test.register('service:resizeService', ResizeService);
-  test.registry.injection('component', 'resizeService', 'service:resizeService');
-}

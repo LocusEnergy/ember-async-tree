@@ -1,10 +1,18 @@
 import Ember from 'ember';
 import indexOf from 'lodash/array/findIndex'
-
+import ResizeService from 'ember-resize/services/resize';
 
 export default class AsyncTreePageObject {
-  constructor(env) {
+  constructor(env, isIntegrationTest) {
     this.env = env;
+    if (isIntegrationTest) {
+      this.setupResizeService(this.env);
+    }
+  }
+
+  setupResizeService(test) {
+    test.register('service:resizeService', ResizeService);
+    test.registry.injection('component', 'resizeService', 'service:resizeService');
   }
 
   component() {
@@ -35,6 +43,14 @@ export default class AsyncTreePageObject {
   findIndex(selector, predicate) {
     let results = this.find(selector).toArray();
     return indexOf(results, predicate);
+  }
+
+  isOpenItem(name) {
+    return this.env.$(`.is-open .node-label:contains(${name})`).length > 0;
+  }
+
+  isNotOpenItem(name) {
+    return this.env.$(`.is-not-open .node-label:contains(${name})`).length > 0;
   }
 }
 
