@@ -40,6 +40,10 @@ export default Component.extend(ResizeAware, {
   didInsertElement() {
     this._super(...arguments);
 
+    Ember.run.scheduleOnce('afterRender', this, this.updateWidth);
+  },
+
+  updateWidth() {
     this.set('width', this.$().width());
   },
 
