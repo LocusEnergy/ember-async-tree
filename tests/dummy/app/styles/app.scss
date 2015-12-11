@@ -1,2 +1,27 @@
-@import 'simple';
-@import 'infinite-scroll';
+// BEGIN-SNIPPET simple-scss
+.async-tree {
+  height: 300px;
+  position: relative;
+  width: 100%;
+  .node-list {
+    list-style: none;
+    padding-left: 10px;
+  }
+  .node-label:before {
+    display: inline-block;
+    width: 20px;
+  }
+  .node-list-item.is-open .node-label::before {
+    content: '-';
+  }
+  .node-list-item.is-not-open .node-label::before {
+    content: '+';
+  }
+  .node-list-item.is-loading .node-label::before {
+    content: '⏳';
+  }
+  .node-list-item.is-empty .node-label::before {
+    content: ' ';
+  }
+}
+// END-SNIPPET

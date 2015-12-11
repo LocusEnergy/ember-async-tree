@@ -2,22 +2,12 @@
 import Ember from 'ember';
 
 const {
-  get,
-  A
+  get
+
 } = Ember;
 
 export default Ember.Controller.extend({
-  init() {
-    this._super();
-    this.set('openNodes', new A([]));
-  },
   actions: {
-    open(node) {
-      this.get('openNodes').addObject(node);
-    },
-    close(node) {
-      this.get('openNodes').removeObject(node);
-    },
     fetch(node) {
       let result;
       let type = get(node, 'type');

@@ -4,15 +4,11 @@
   {{! // BEGIN-SNIPPET infinite-scroll-template }}
   <div class="infinite-scroll-container">
     {{#async-tree
-      infinite=true
-      scroll-selector='.infinite-scroll-container'
-      children=initialData
+      initial=initialData
       meta=initialData.meta
       fetch=(action 'fetch')
       check-has-more=(action 'checkHasMore')
-      open=(action 'open')
-      close=(action 'close')
-      as |node component|
+      as |node|
     }}{{node.name}}{{/async-tree}}
   </div>
   {{! // END-SNIPPET }}

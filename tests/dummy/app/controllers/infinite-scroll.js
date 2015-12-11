@@ -2,10 +2,6 @@ import Ember from 'ember';
 import range from 'lodash/utility/range';
 
 export default Ember.Controller.extend({
-  init() {
-    this._super();
-    this.set('openNodes', []);
-  },
   initialData: Ember.computed('model', {
     get() {
       return this.getMore(0, 50);
@@ -18,12 +14,6 @@ export default Ember.Controller.extend({
     return data;
   },
   actions: {
-    open(node) {
-      this.get('openNodes').addObject(node);
-    },
-    close(node) {
-      this.get('openNodes').removeObject(node);
-    },
     fetch(node, meta = {}) {
       if (node) {
         const {name} = node;
@@ -39,8 +29,7 @@ export default Ember.Controller.extend({
         Ember.run.later(resolve, more, 200);
       });
     },
-    checkHasMore(node, meta) {
-      const { last } = meta;
+    checkHasMore({ last }) {
       const data = this.get('model');
       return last < data.length;
     }
