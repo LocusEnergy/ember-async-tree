@@ -52,6 +52,14 @@ export default class AsyncTreePageObject {
   isNotOpenItem(name) {
     return this.env.$(`.is-not-open .node-label:contains(${name})`).length > 0;
   }
+
+  isEmpty() {
+    return this.env.$('.node-list').hasClass('is-empty');
+  }
+
+  emptyText() {
+    return this.env.$('.empty-message').text().trim();
+  }
 }
 
 function findItems(context, selector) {

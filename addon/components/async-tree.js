@@ -31,6 +31,46 @@ export default Component.extend(ResizeAware, {
       }
   }),
 
+  visibleNodes: computed(
+    '_root',
+    'openNodes.[]',
+    '_flattened.[]',
+    'hasMore', {
+      get() {
+        let root = this.get('_root');
+        if (isNone(root)) {
+          return;
+        }
+
+        let openNodes = this.get('openNodes');
+        let flattened = this.get('_flattened');
+        let hasMore = this.get('hasMore');
+
+        let visible = flattened.filter(function (node) {
+          return node.parent === root || node.hasAllParents(openNodes);
+        });
+
+        if (hasMore) {
+          return visible.concat({isMore: true});
+        }
+
+        return visible;
+      }
+    }
+  ),
+
+  hasMore: computed('meta', 'check-has-more', {
+    get() {
+      const meta = this.get('meta');
+      const checkHasMore = this.get('check-has-more');
+      if (meta && checkHasMore) {
+        return checkHasMore(meta);
+      }
+    }
+  }),
+
+  isEmpty: computed.empty('visibleNodes'),
+
   didReceiveAttrs() {
     this._super(...arguments);
 
@@ -70,44 +110,6 @@ export default Component.extend(ResizeAware, {
     this.set('_root', root);
     this.updateFlattened();
   },
-
-  visibleNodes: computed(
-    '_root',
-    'openNodes.[]',
-    '_flattened.[]',
-    'hasMore', {
-      get() {
-        let root = this.get('_root');
-        if (isNone(root)) {
-          return;
-        }
-
-        let openNodes = this.get('openNodes');
-        let flattened = this.get('_flattened');
-        let hasMore = this.get('hasMore');
-
-        let visible = flattened.filter(function (node) {
-          return node.parent === root || node.hasAllParents(openNodes);
-        });
-
-        if (hasMore) {
-          return visible.concat({isMore: true});
-        }
-
-        return visible;
-      }
-    }
-  ),
-
-  hasMore: computed('meta', 'check-has-more', {
-    get() {
-      const meta = this.get('meta');
-      const checkHasMore = this.get('check-has-more');
-      if (meta && checkHasMore) {
-        return checkHasMore(meta);
-      }
-    }
-  }),
 
   startLoading(node) {
     this.set('isLoading', node);

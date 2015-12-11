@@ -65,7 +65,6 @@ test('initial values open nodes', function(assert){
 });
 
 test('changing initial value rebuilds the tree', function(assert){
-
   this.set('initialFilter', FILTER);
 
   this.set('initial', [ FIRST_PARENT, FIRST_CHILD, FIRST_GRANDCHILD ]);
@@ -94,4 +93,27 @@ test('changing initial value rebuilds the tree', function(assert){
   assert.ok(this.asyncTree.isOpenItem('second parent'), 'second parent is open');
   assert.ok(this.asyncTree.isOpenItem('second child'), 'second child is open');
   assert.ok(this.asyncTree.isNotOpenItem('second grandchild'), 'second granchild is not open');
+});
+
+test('no data uses inverse template', function(assert){
+  this.render(hbs`
+    {{#async-tree initial=initial as |node|}}
+      {{node.name}}
+    {{else}}
+      Nothing to show
+    {{/async-tree}}
+  `);
+
+  assert.ok(this.asyncTree.isEmpty(), 'async tree is empty with undefined');
+  assert.equal(this.asyncTree.emptyText(), 'Nothing to show', 'Inverse message shown with undefined');
+
+  this.set('initial', []);
+
+  assert.ok(this.asyncTree.isEmpty(), 'async tree is empty with empty array');
+  assert.equal(this.asyncTree.emptyText(), 'Nothing to show', 'Inverse message shown with undefined');
+
+  this.set('initial', [ FIRST_PARENT ]);
+
+  assert.ok(!this.asyncTree.isEmpty(), 'async tree is not empty');
+  assert.equal(this.asyncTree.emptyText(), '', 'Inverse message is empty');
 });
