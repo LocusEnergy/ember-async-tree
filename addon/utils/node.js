@@ -17,7 +17,7 @@ export default class Node {
     this.parent = parent;
     this.content = options.content;
     this.depth = options.depth == null ? -1 : options.depth;
-    this.children = new Map();
+    this.children = new Ember.Map();
 
     this.isLoading = false;
     this.isLoaded = false;

@@ -1,5 +1,5 @@
 import Ember from 'ember';
-import indexOf from 'lodash/array/findIndex'
+import indexOf from 'lodash/array/findIndex';
 import ResizeService from 'ember-resize/services/resize';
 
 export default class AsyncTreePageObject {
@@ -24,7 +24,7 @@ export default class AsyncTreePageObject {
     return Ember.$(items[index]).text().trim();
   }
 
-  itemsText(selector) {
+  itemsText(selector = '.node-label') {
     let results = this.find(selector).toArray();
     return results.map(function(item){
       return Ember.$(item).text().trim();

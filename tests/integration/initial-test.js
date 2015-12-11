@@ -32,9 +32,11 @@ test('initial values are rendered', function(assert) {
       as |node|}}{{node.name}}
     {{/async-tree}}`);
 
-  assert.equal(this.asyncTree.itemText(0), 'first parent');
-  assert.equal(this.asyncTree.itemText(1), 'second parent');
-  assert.equal(this.asyncTree.itemText(2), 'third parent');
+    assert.deepEqual(this.asyncTree.itemsText(), [
+        'first parent',
+        'second parent',
+        'third parent'
+    ]);
 });
 
 test('initial values open nodes', function(assert){
@@ -51,13 +53,15 @@ test('initial values open nodes', function(assert){
       as |node|}}{{node.name}}
     {{/async-tree}}`);
 
-  assert.equal(this.asyncTree.itemText(0), 'first parent');
-  assert.equal(this.asyncTree.itemText(1), 'first child');
-  assert.equal(this.asyncTree.itemText(2), 'first grandchild');
+  assert.deepEqual(this.asyncTree.itemsText(), [
+    'first parent',
+    'first child',
+    'first grandchild'
+  ]);
 
-  assert.ok(this.asyncTree.itemContains('first parent').hasClass('is-open'));
-  assert.ok(this.asyncTree.itemContains('first child').hasClass('is-open'));
-  assert.ok(this.asyncTree.itemContains('first grandchild').hasClass('is-not-open'));
+  assert.ok(this.asyncTree.isOpenItem('first parent'), 'first parent is open');
+  assert.ok(this.asyncTree.isOpenItem('first child'), 'first child is open');
+  assert.ok(this.asyncTree.isNotOpenItem('first grandchild'), 'first granchiuld is not open');
 });
 
 test('changing initial value rebuilds the tree', function(assert){
@@ -73,17 +77,21 @@ test('changing initial value rebuilds the tree', function(assert){
       as |node|}}{{node.name}}
     {{/async-tree}}`);
 
-  assert.equal(this.asyncTree.itemText(0), 'first parent');
-  assert.equal(this.asyncTree.itemText(1), 'first child');
-  assert.equal(this.asyncTree.itemText(2), 'first grandchild');
+    assert.deepEqual(this.asyncTree.itemsText(), [
+        'first parent',
+        'first child',
+        'first grandchild'
+    ]);
 
   this.set('initial', [ SECOND_PARENT, SECOND_CHILD, SECOND_GRANDCHILD ]);
 
-  assert.equal(this.asyncTree.itemText(0), 'second parent');
-  assert.equal(this.asyncTree.itemText(1), 'second child');
-  assert.equal(this.asyncTree.itemText(2), 'second grandchild');
+  assert.deepEqual(this.asyncTree.itemsText(), [
+      'second parent',
+      'second child',
+      'second grandchild'
+  ]);
 
-  assert.ok(this.asyncTree.itemContains('second parent').hasClass('is-open'));
-  assert.ok(this.asyncTree.itemContains('second child').hasClass('is-open'));
-  assert.ok(this.asyncTree.itemContains('second grandchild').hasClass('is-not-open'));
+  assert.ok(this.asyncTree.isOpenItem('second parent'), 'second parent is open');
+  assert.ok(this.asyncTree.isOpenItem('second child'), 'second child is open');
+  assert.ok(this.asyncTree.isNotOpenItem('second grandchild'), 'second granchild is not open');
 });
