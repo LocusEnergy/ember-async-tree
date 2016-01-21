@@ -2,11 +2,7 @@
   {{#if isEmpty}}
     <div class="empty-message">{{yield to='inverse'}}</div>
   {{else}}
-    {{#ember-collection
-      classNames="ember-collection"
-      items=visibleNodes
-      cell-layout=(fixed-grid-layout width row-height)
-      as |node|
+    {{#each visibleNodes as |node|
     }}
       {{#if node.isMore}}
         {{#async-more on-render=(action 'fetchMore' meta)}}More{{/async-more}}
@@ -15,6 +11,6 @@
             <span class="async-tree-node node-label" {{action 'toggle' node}}>{{yield node.content}}</span>
         </div>
       {{/if}}
-    {{/ember-collection}}
+    {{/each}}
   {{/if}}
 </div>

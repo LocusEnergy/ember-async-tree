@@ -48,7 +48,6 @@
     "ember-cli-babel": "^5.1.5",
     "ember-helpers-array-contains": "^1.0.0",
     "ember-truth-helpers": "^1.2.0",
-    "ember-collection": "emberjs/ember-collection",
     "ember-resize": "0.0.10"
   },
   "ember-addon": {

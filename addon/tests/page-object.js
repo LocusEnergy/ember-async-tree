@@ -37,7 +37,8 @@ export default class AsyncTreePageObject {
   }
 
   find(selector) {
-    return sortItemsByPosition(this.env, true, selector);
+    let component = this.component();
+    return component.find(...arguments);
   }
 
   findIndex(selector, predicate) {
@@ -63,11 +64,11 @@ export default class AsyncTreePageObject {
 }
 
 function findItems(context, selector) {
-  return context.$(`.ember-collection > div:first > div:first > div ${selector}`);  // scrollable's content's children (cells)
+  return context.$(`div:first > div:first > div ${selector}`);  // scrollable's content's children (cells)
 }
 
 function findVisibleItems(context, selector) {
-  return context.$(`.ember-collection > div:first > div:first > div:visible ${selector}`);
+  return context.$(`div:first > div:first > div:visible ${selector}`);
 }
 
 function extractPosition(element) {
