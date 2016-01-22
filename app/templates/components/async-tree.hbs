@@ -5,7 +5,7 @@
     {{#each visibleNodes as |node|
     }}
       {{#if node.isMore}}
-        {{#async-more on-render=(action 'fetchMore' meta)}}More{{/async-more}}
+        {{#async-more on-enter-viewport=(action 'fetchMore' meta)}}More{{/async-more}}
       {{else}}
         <div class="node-list-item {{if node.isLoading 'is-loading'}} {{if (array-contains openNodes node) 'is-open' 'is-not-open'}} {{if node.isEmpty 'is-empty'}}" style={{node-style style node bind=this}}>
             <span class="async-tree-node node-label" {{action 'toggle' node}}>{{yield node.content}}</span>

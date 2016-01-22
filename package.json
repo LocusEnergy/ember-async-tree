@@ -48,7 +48,8 @@
     "ember-cli-babel": "^5.1.5",
     "ember-helpers-array-contains": "^1.0.0",
     "ember-truth-helpers": "^1.2.0",
-    "ember-resize": "0.0.10"
+    "ember-resize": "0.0.10",
+    "ember-in-viewport": "2.0.4"
   },
   "ember-addon": {
     "configPath": "tests/dummy/config"
