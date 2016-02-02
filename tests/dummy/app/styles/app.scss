@@ -6,6 +6,9 @@
   .node-list {
     list-style: none;
     padding-left: 10px;
+    width: 400px;
+    height: 300px;
+    overflow-y: scroll;
   }
   .node-label:before {
     display: inline-block;

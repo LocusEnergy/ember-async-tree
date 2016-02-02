@@ -7,7 +7,7 @@
     "ember-load-initializers": "0.1.7",
     "ember-qunit": "0.4.16",
     "ember-qunit-notifications": "0.1.0",
-    "jquery": "^1.11.3",
+    "jquery": "1.11.3",
     "loader.js": "ember-cli/loader.js#3.4.0",
     "material-design-lite-src": "https://github.com/google/material-design-lite.git#37286ae139b0ae336a8a7e9ed3b18ace1abff7ed",
     "material-design-lite": "~1.0.0",

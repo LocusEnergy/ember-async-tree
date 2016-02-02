@@ -36,7 +36,7 @@ export default class AsyncTreePageObject {
     return items.find(`.node-list-item:contains('${text}')`);
   }
 
-  find(selector) {
+  find() {
     let component = this.component();
     return component.find(...arguments);
   }
