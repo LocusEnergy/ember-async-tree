@@ -147,6 +147,76 @@ test('node.parents() returns array of parents', function(assert){
 
 });
 
+test('node.addChildren() should add children', function(assert){
+
+  let root = new Node();
+  let result = root.addChildren([ FIRST_PARENT ]);
+  assert.deepEqual(getNames(result), [ 'first parent' ]);
+
+  let [ firstParent ] = result;
+  let children = firstParent.addChildren([ FIRST_CHILD, SECOND_CHILD ]);
+
+  assert.deepEqual(getNames(children), ['first child', 'second child']);
+});
+
+test('node.addChildren() should add children and grandchildren', function(assert){
+  assert.expect(14);
+
+  let root = new Node();
+  let result = root.addChildren([
+    {
+      content: FIRST_PARENT,
+      children: [
+        FIRST_CHILD, SECOND_CHILD
+      ]
+    }
+  ]);
+
+  let [ parentNode ] = result;
+  let children = parentNode.getChildren();
+
+  assert.ok(parentNode.isLoaded, 'parent node is marked as loaded');
+  assert.equal(children.length, 2, '2 children were added to parent node');
+  assert.deepEqual(getNames(children), ['first child', 'second child']);
+
+  root = new Node();
+
+  result = root.addChildren([
+    {
+      content: FIRST_PARENT,
+      children: [
+        {
+          content: FIRST_CHILD,
+          children: [ FIRST_GRANDCHILD ]
+        },
+        {
+          content: SECOND_CHILD,
+          children: [ SECOND_GRANDCHILD ]
+        }
+      ]
+    }
+  ]);
+
+  [ parentNode ] = result;
+  let [ firstChild, secondChild ] = parentNode.getChildren();
+  let firstGrandchildren = firstChild.getChildren();
+  let secondGrandchildren  = secondChild.getChildren();
+
+  assert.ok(parentNode.isLoaded, 'parent node is marked as loaded');
+
+  assert.ok(firstChild, 'first child is present');
+  assert.ok(firstChild.isLoaded, 'first child is marked as loaded');
+  assert.ok(secondChild, 'second child is present');
+  assert.ok(secondChild.isLoaded, 'second child is marked as loaded');
+
+  assert.equal(firstGrandchildren.length, 1, 'first child has one grandchild');
+  assert.notOk(firstGrandchildren.isLoaded, 'first grandchild is not loaded');
+  assert.equal(secondGrandchildren.length, 1, 'second child has one grandchild');
+  assert.notOk(secondGrandchildren.isLoaded, 'second grandchild is not loaded');
+  assert.deepEqual(getNames(firstGrandchildren), ['first grandchild' ]);
+  assert.deepEqual(getNames(secondGrandchildren), ['second grandchild' ]);
+});
+
 function getNames(nodes) {
   return nodes.map(function(node){
     return get(node, 'content.name');

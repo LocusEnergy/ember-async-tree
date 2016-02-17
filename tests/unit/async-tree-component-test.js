@@ -19,7 +19,7 @@ const {
 
 module('unit: async-tree component');
 
-test('flattened data is ordered correctly when initial data is chagned', function(assert){
+test('flattened data is ordered correctly when initial data is changed', function(assert){
 
   let component = AsyncTreeComponent.create();
 

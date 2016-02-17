@@ -36,7 +36,7 @@ export default class AsyncTreePageObject {
     return items.find(`.node-list-item:contains('${text}')`);
   }
 
-  find(selector) {
+  find() {
     let component = this.component();
     return component.find(...arguments);
   }
@@ -44,6 +44,10 @@ export default class AsyncTreePageObject {
   findIndex(selector, predicate) {
     let results = this.find(selector).toArray();
     return indexOf(results, predicate);
+  }
+
+  open(name) {
+    this.env.$(`.node-label:contains(${name})`).click();
   }
 
   isOpenItem(name) {

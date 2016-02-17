@@ -117,3 +117,33 @@ test('no data uses inverse template', function(assert){
   assert.ok(!this.asyncTree.isEmpty(), 'async tree is not empty');
   assert.equal(this.asyncTree.emptyText(), '', 'Inverse message is empty');
 });
+
+test('setting an on-open action changes the open nodes list', function(assert){
+  this.render(hbs`
+    {{#async-tree
+      initial=initial
+      on-open=appendNodes
+      fetch=fetchChildren
+      as |node|}}
+      {{node.name}}
+    {{/async-tree}}
+  `);
+
+  this.set('initial', [ FIRST_PARENT ]);
+  this.set('fetchChildren', () => [ FIRST_CHILD, FIRST_GRANDCHILD ]);
+  this.set('appendNodes', (node, openNodes) => openNodes.concat(node));
+
+  assert.deepEqual(this.asyncTree.itemsText(), [
+    'first parent',
+  ]);
+  assert.ok(this.asyncTree.isNotOpenItem('first parent'));
+
+  // open the node.
+  this.asyncTree.open('first parent');
+  assert.ok(this.asyncTree.isOpenItem('first parent'));
+  assert.deepEqual(this.asyncTree.itemsText(), [
+    'first parent',
+    'first child',
+    'first grandchild'
+  ]);
+});
