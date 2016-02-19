@@ -46,6 +46,10 @@ export default class AsyncTreePageObject {
     return indexOf(results, predicate);
   }
 
+  open(name) {
+    this.env.$(`.node-label:contains(${name})`).click();
+  }
+
   isOpenItem(name) {
     return this.env.$(`.is-open .node-label:contains(${name})`).length > 0;
   }

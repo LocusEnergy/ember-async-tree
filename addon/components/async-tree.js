@@ -136,7 +136,13 @@ export default Component.extend(ResizeAware, {
 
   openNode(node) {
     let openNodes = this.get('openNodes');
-    this.set('openNodes', openNodes.concat(node));
+    let onOpen = this.get('on-open');
+    if (onOpen) {
+      openNodes = onOpen(node, openNodes);
+    } else {
+      openNodes = openNodes.concat(node);
+    }
+    this.set('openNodes', openNodes);
   },
 
   closeNode(node) {

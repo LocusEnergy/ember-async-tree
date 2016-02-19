@@ -7,6 +7,7 @@ import intersection from 'lodash/array/intersection';
 
 const {
   isEmpty,
+  isNone,
   isPresent,
   set
 } = Ember;
@@ -34,10 +35,24 @@ export default class Node {
   }
 
   addChild(item) {
+
+    let children;
+
+    if (!isNone(item.content) && !isNone(item.children)) {
+      children = item.children;
+      item = item.content;
+    }
+
     let node = new Node({
       content: item,
       depth: this.depth + 1
     }, this);
+
+    if (!isNone(children)) {
+      node.markLoaded();
+      node.addChildren(children);
+    }
+
     this.children.set(item, node);
     return node;
   }
