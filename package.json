@@ -1,6 +1,6 @@
 {
   "name": "ember-async-tree",
-  "version": "0.7.1",
+  "version": "0.7.3",
   "description": "Show long asyncronous loading trees of nodes",
   "directories": {
     "doc": "doc",
@@ -46,7 +46,7 @@
   "dependencies": {
     "ember-cli-htmlbars": "^1.0.1",
     "ember-cli-babel": "^5.1.5",
-    "ember-helpers-array-contains": "^1.0.0",
+    "ember-composable-helpers": "0.19.0",
     "ember-truth-helpers": "^1.2.0",
     "ember-resize": "0.0.10",
     "ember-in-viewport": "2.0.4"
