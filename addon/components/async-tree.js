@@ -147,7 +147,13 @@ export default Component.extend(ResizeAware, {
 
   closeNode(node) {
     let openNodes = this.get('openNodes');
-    this.set('openNodes', without(openNodes, node));
+    let onClose = this.get('on-close');
+    if (onClose) {
+      openNodes = onClose(node, openNodes);
+    } else {
+      openNodes = without(openNodes, node);
+    }
+    this.set('openNodes', openNodes);
   },
 
   _open(node) {
