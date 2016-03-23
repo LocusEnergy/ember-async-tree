@@ -50,6 +50,10 @@ export default class AsyncTreePageObject {
     this.env.$(`.node-label:contains(${name})`).click();
   }
 
+  close(name) {
+    this.env.$(`.node-label:contains(${name})`).click();
+  }
+
   isOpenItem(name) {
     return this.env.$(`.is-open .node-label:contains(${name})`).length > 0;
   }

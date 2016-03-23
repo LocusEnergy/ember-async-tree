@@ -1,5 +1,6 @@
 import { moduleForComponent, test } from 'ember-qunit';
 import hbs from 'htmlbars-inline-precompile';
+import without from 'lodash/array/without';
 
 import {
   FIRST_PARENT,
@@ -146,4 +147,31 @@ test('setting an on-open action changes the open nodes list', function(assert){
     'first child',
     'first grandchild'
   ]);
+});
+
+test('setting an on-close action changes the open nodes list', function(assert){
+  this.render(hbs`
+    {{#async-tree
+      initial=initial
+      on-close=removeNodes
+      fetch=fetchChildren
+      as |node|}}
+      {{node.name}}
+    {{/async-tree}}
+  `);
+
+  this.set('initial', [ FIRST_PARENT, FIRST_CHILD, FIRST_GRANDCHILD ]);
+  this.set('fetchChildren', () => []);
+  this.set('removeNodes', (node, openNodes) => without(openNodes, node));
+
+  assert.deepEqual(this.asyncTree.itemsText(), [
+    'first parent',
+    'first child',
+    'first grandchild'
+  ]);
+
+  // close the parent node.
+  this.asyncTree.close('first parent');
+  assert.ok(this.asyncTree.isNotOpenItem('first child'));
+  assert.ok(this.asyncTree.isNotOpenItem('first grandchild'));
 });
