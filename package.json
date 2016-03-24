@@ -1,6 +1,6 @@
 {
   "name": "ember-async-tree",
-  "version": "0.7.3",
+  "version": "0.7.4",
   "description": "Show long asyncronous loading trees of nodes",
   "directories": {
     "doc": "doc",
