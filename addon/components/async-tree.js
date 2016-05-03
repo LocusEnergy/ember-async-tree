@@ -16,7 +16,8 @@ const {
 export default Component.extend(ResizeAware, {
   resizeDebouncedEventsEnabled: false,
   classNameBindings: [':async-tree', 'isLoading'],
-  
+
+  autoIndentation: true,
   indentation: 20,
 
   checkInitialChanged() {
