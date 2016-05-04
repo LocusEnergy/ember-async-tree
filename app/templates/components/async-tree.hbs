@@ -7,7 +7,7 @@
       {{#if node.isMore}}
         {{#async-more on-enter-viewport=(action 'fetchMore' meta)}}More{{/async-more}}
       {{else}}
-        <div class="node-list-item level-{{node.depth}} {{if node.isLoading 'is-loading'}} {{if (contains node openNodes) 'is-open' 'is-not-open'}} {{if node.isEmpty 'is-empty'}}" style={{node-style style node autoIndent bind=this}}>
+        <div class="node-list-item level-{{node.depth}} {{if node.isLoading 'is-loading'}} {{if (contains node openNodes) 'is-open' 'is-not-open'}} {{if node.isEmpty 'is-empty'}}" style={{if styleIndent (node-style style node bind=this)}}>
             <span class="async-tree-node node-label" {{action 'toggle' node}}>{{yield node.content}}</span>
         </div>
       {{/if}}

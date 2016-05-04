@@ -17,7 +17,7 @@ export default Component.extend(ResizeAware, {
   resizeDebouncedEventsEnabled: false,
   classNameBindings: [':async-tree', 'isLoading'],
 
-  autoIndent: true,
+  styleIndent: true,
   indentation: 20,
 
   checkInitialChanged() {
