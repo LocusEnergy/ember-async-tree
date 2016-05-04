@@ -175,3 +175,26 @@ test('setting an on-close action changes the open nodes list', function(assert){
   assert.ok(this.asyncTree.isNotOpenItem('first child'));
   assert.ok(this.asyncTree.isNotOpenItem('first grandchild'));
 });
+
+test('disable indent styles and level classnames', function(assert) {
+  let initial = [ FIRST_PARENT, FIRST_CHILD, FIRST_GRANDCHILD ];
+
+  this.set('initial', initial);
+
+  this.set('initialFilter', FILTER);
+
+  this.render(hbs`
+    {{#async-tree
+      initial=initial
+      initial-filter=initialFilter
+      styleIndent=false
+      as |node|}}{{node.name}}
+    {{/async-tree}}`);
+
+  assert.equal(this.$('.node-list-item:eq(0)').css('margin-left'), '0px', 'first node is not indented');
+  assert.ok(this.$('.node-list-item:eq(0)').hasClass('level-0'), 'has correct level class');
+  assert.equal(this.$('.node-list-item:eq(1)').css('margin-left'), '0px', 'second node is not indented');
+  assert.ok(this.$('.node-list-item:eq(1)').hasClass('level-1'), 'has correct level class');
+  assert.equal(this.$('.node-list-item:eq(2)').css('margin-left'), '0px', 'third node is not indented');
+  assert.ok(this.$('.node-list-item:eq(2)').hasClass('level-2'), 'has correct level class');
+});
