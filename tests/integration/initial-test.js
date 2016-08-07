@@ -135,7 +135,7 @@ test('setting an on-open action changes the open nodes list', function(assert){
   this.set('appendNodes', (node, openNodes) => openNodes.concat(node));
 
   assert.deepEqual(this.asyncTree.itemsText(), [
-    'first parent',
+    'first parent'
   ]);
   assert.ok(this.asyncTree.isNotOpenItem('first parent'));
 

@@ -2,20 +2,13 @@
   "name": "ember-async-tree",
   "dependencies": {
     "ember": "2.2.0",
-    "ember-cli-shims": "0.0.6",
-    "ember-cli-test-loader": "0.2.1",
-    "ember-load-initializers": "0.1.7",
+    "ember-cli-shims": "0.1.0",
     "ember-qunit": "0.4.16",
     "ember-qunit-notifications": "0.1.0",
     "jquery": "1.11.3",
-    "loader.js": "ember-cli/loader.js#3.4.0",
     "material-design-lite-src": "https://github.com/google/material-design-lite.git#37286ae139b0ae336a8a7e9ed3b18ace1abff7ed",
     "material-design-lite": "~1.0.0",
-    "pretender": "~0.7.0",
-    "lodash": "~3.7.0",
-    "Faker": "~3.0.0",
-    "qunit": "~1.20.0",
-    "ember-data": "~2.2.0"
+    "qunit": "~1.20.0"
   },
   "resolutions": {
     "qunit-notifications": "~0.1.0",
