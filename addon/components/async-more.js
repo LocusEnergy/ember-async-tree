@@ -4,7 +4,7 @@ import InViewportMixin from 'ember-in-viewport';
 export default Ember.Component.extend(InViewportMixin, {
   classNames: ['load-more'],
   init() {
-    this._super();
+    this._super(...arguments);
     const scrollSelector = this.get('scroll-selector');
     if (scrollSelector) {
       this.set('viewportListeners', [

@@ -1,4 +1,5 @@
 import Ember from 'ember';
+import layout from '../templates/components/async-tree';
 import without from 'lodash/array/without';
 import Node from '../utils/node';
 import includes from 'lodash/collection/includes';
@@ -14,6 +15,7 @@ const {
 } = Ember;
 
 export default Component.extend(ResizeAware, {
+  layout,
   resizeDebouncedEventsEnabled: false,
   classNameBindings: [':async-tree', 'isLoading'],
 
